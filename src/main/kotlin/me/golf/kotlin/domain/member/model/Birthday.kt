@@ -1,0 +1,36 @@
+package me.golf.kotlin.domain.member.model
+
+import com.fasterxml.jackson.annotation.JsonValue
+import java.time.LocalDate
+import javax.persistence.Column
+import javax.persistence.Embeddable
+
+@Embeddable
+class Birthday (
+    @Column(columnDefinition = "datetime")
+    @JsonValue
+    var birth: LocalDate) {
+
+    fun getAge(): Int {
+        return LocalDate.now().year - this.birth.year
+    }
+
+    fun validateExceedNowYear(birth: LocalDate): Boolean {
+        return birth > LocalDate.now()
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as Birthday
+
+        if (birth != other.birth) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        return birth.hashCode()
+    }
+}
