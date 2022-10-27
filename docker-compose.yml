@@ -1,0 +1,51 @@
+version: "3.7"
+services:
+
+  mysql_db:
+    platform: linux/x86_64
+    image: mysql:latest
+    restart: always
+    command:
+      - --lower_case_table_names=1
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+
+    container_name: mysql-test-7
+    ports:
+      - "3307:3306"
+    environment:
+      - MYSQL_DATABASE=golf
+      - MYSQL_ROOT_PASSWORD=1234
+      - TZ=Asia/Seoul
+      - MYSQL_ROOT_PASSWORD=admin
+      - MYSQL_DATABASE=bank
+      - MYSQL_USER=nokt
+      - MYSQL_PASSWORD=1234
+
+    volumes:
+      - /Users/nogyeongtae/Shared/data/golf-mysql:/var/lib/mysql
+
+  redis:
+    image: redis:latest
+    command: redis-server --port 6379
+    container_name: redis
+    hostname: redis
+    labels:
+      - "name=redis"
+      - "mode=standalone"
+    ports:
+      - "16379:6379"
+
+    volumes:
+      - /Users/nogyeongtae/Shared/data/golf-redis:/var/lib/redis
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: bank
+    ports:
+      - "8083:8091"
+    depends_on:
+      - mysql_db
+      - redis
