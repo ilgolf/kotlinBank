@@ -6,6 +6,7 @@ plugins {
 	kotlin("jvm") version "1.6.21"
 	kotlin("plugin.spring") version "1.6.21"
 	kotlin("plugin.jpa") version "1.6.21"
+	kotlin("kapt") version "1.3.61"
 }
 
 group = "me.golf"
@@ -47,10 +48,18 @@ dependencies {
 	runtimeOnly("com.h2database:h2")
 	runtimeOnly("com.mysql:mysql-connector-j")
 
+	// redis(cache)
+	implementation("org.springframework.boot:spring-boot-starter-data-redis")
+
 	// jwt
 	runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.11.5")
 	implementation("io.jsonwebtoken:jjwt-api:0.11.5")
 	runtimeOnly("io.jsonwebtoken:jjwt-impl:0.11.5")
+
+	//QueryDSL
+	api("com.querydsl:querydsl-jpa:5.0.0")
+	kapt("com.querydsl:querydsl-apt:5.0.0:jpa")
+	kapt("org.hibernate.javax.persistence:hibernate-jpa-2.1-api:1.0.2.Final")
 
 	// test
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
@@ -74,4 +83,8 @@ tasks.withType<KotlinCompile> {
 
 tasks.withType<Test> {
 	useJUnitPlatform()
+}
+
+kotlin.sourceSets.main {
+	kotlin.srcDir("$buildDir/generated/")
 }

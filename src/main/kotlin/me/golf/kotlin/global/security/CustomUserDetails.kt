@@ -1,5 +1,6 @@
 package me.golf.kotlin.global.security
 
+import com.querydsl.core.annotations.QueryProjection
 import me.golf.kotlin.domain.member.model.Member
 import me.golf.kotlin.domain.member.model.RoleType
 import me.golf.kotlin.domain.member.model.UserEmail
@@ -8,14 +9,17 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 import java.util.Collections
 
-class CustomUserDetails(
+class CustomUserDetails
+
+@QueryProjection
+constructor(
     var memberId: Long,
     var email: UserEmail,
     var roleType: RoleType
 ) : UserDetails {
 
     companion object {
-        fun of (member: Member): CustomUserDetails {
+        fun of(member: Member): CustomUserDetails {
             return CustomUserDetails(memberId = member.id, email = member.email, roleType = member.roleType)
         }
     }

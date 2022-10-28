@@ -21,6 +21,10 @@ spring:
     show-sql: true
     open-in-view: false
 
+  redis:
+    host: localhost
+    port: 6379
+
 jwt:
   secret: c2lsdmVybmluZS10ZWNoLXNwcmluZy1ib290LWp3dC10dXRvcmlhbC1zZWNyZXQtc2lsdmVybmluZS10ZWNoLXNwcmluZy1ib290LWp3dC10dXRvcmlhbC1zZWNyZXQK
   accessToken-validity-in-seconds: 7200 # 1??

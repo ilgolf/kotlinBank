@@ -7,9 +7,10 @@ import javax.persistence.Embeddable
 
 @Embeddable
 class Birthday (
-    @Column(columnDefinition = "datetime")
+    @Column(name = "birth", columnDefinition = "datetime")
     @JsonValue
-    var value: LocalDate) {
+    val value: LocalDate
+) {
 
     fun getAge(): Int {
         return LocalDate.now().year - this.value.year

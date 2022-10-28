@@ -34,9 +34,9 @@ class Member (
     var roleType: RoleType,
 
     @Embedded
-    var profileImage: ProfileImage?,
+    var profileImage: ProfileImage,
 
-    @Column(length = 11, nullable = false)
+    @Column(length = 20, nullable = false)
     var phoneNumber: String): BaseTimeEntity() {
 
     @Id
@@ -57,15 +57,17 @@ class Member (
         return this
     }
 
-    fun matchPassword(passwordEncoder: PasswordEncoder, password: String) {
-        if (passwordEncoder.matches(password, this.password)) {
-            throw IllegalArgumentException("password가 틀렸습니다. $password")
+    fun matchPassword(passwordEncoder: PasswordEncoder, rawPassword: String): Boolean {
+        if (passwordEncoder.matches(rawPassword, this.password)) {
+            return true
         }
+
+        return false
     }
 
     fun encodePassword(passwordEncoder: PasswordEncoder): Member {
-        passwordEncoder.encode(this.password)
-        return this;
+        this.password = passwordEncoder.encode(this.password)
+        return this
     }
 
     fun getEmailId(): String {
@@ -80,17 +82,18 @@ class Member (
         return this.birth.getAge()
     }
 
-    fun delete() {
+    fun delete(): Member {
         this.deleted = true
-    }
-
-    fun changePassword(passwordEncoder: PasswordEncoder, password: String): Member {
-        this.password = password
         return this
     }
 
-    fun validationProfileUrl(profileImage: String): Boolean {
-        return this.profileImage?.validateImagePath(profileImage) ?: true
+    fun changePassword(passwordEncoder: PasswordEncoder, password: String): Member {
+        this.password = passwordEncoder.encode(password)
+        return this
+    }
+
+    fun validationProfileUrl(profileImage: ProfileImage): Boolean {
+        return this.profileImage.validateImagePath(profileImage)
     }
 
     // equalsAndHashcode
