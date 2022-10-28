@@ -8,16 +8,16 @@ import javax.persistence.Embeddable
 class UserEmail(
     @Column(unique = true, nullable = false)
     @JsonValue
-    var email: String) {
+    var value: String) {
 
     fun getHost(): String {
-        val index = email.indexOf("@")
-        return email.substring(index + 1)
+        val index = value.indexOf("@")
+        return value.substring(index + 1)
     }
 
     fun getId(): String {
-        val index = email.indexOf("@")
-        return email.substring(0, index)
+        val index = value.indexOf("@")
+        return value.substring(0, index)
     }
 
     override fun equals(other: Any?): Boolean {
@@ -26,12 +26,12 @@ class UserEmail(
 
         other as UserEmail
 
-        if (email != other.email) return false
+        if (value != other.value) return false
 
         return true
     }
 
     override fun hashCode(): Int {
-        return email.hashCode()
+        return value.hashCode()
     }
 }

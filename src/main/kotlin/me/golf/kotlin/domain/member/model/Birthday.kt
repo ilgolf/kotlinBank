@@ -9,10 +9,10 @@ import javax.persistence.Embeddable
 class Birthday (
     @Column(columnDefinition = "datetime")
     @JsonValue
-    var birth: LocalDate) {
+    var value: LocalDate) {
 
     fun getAge(): Int {
-        return LocalDate.now().year - this.birth.year
+        return LocalDate.now().year - this.value.year
     }
 
     fun validateExceedNowYear(birth: LocalDate): Boolean {
@@ -25,12 +25,12 @@ class Birthday (
 
         other as Birthday
 
-        if (birth != other.birth) return false
+        if (value != other.value) return false
 
         return true
     }
 
     override fun hashCode(): Int {
-        return birth.hashCode()
+        return value.hashCode()
     }
 }
