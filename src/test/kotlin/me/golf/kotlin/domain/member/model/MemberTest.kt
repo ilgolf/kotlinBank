@@ -5,6 +5,7 @@ import me.golf.kotlin.domain.member.util.TestPasswordEncoder
 import org.junit.jupiter.api.Test
 
 import org.assertj.core.api.Assertions.*
+import org.junit.jupiter.api.DisplayName
 import java.time.LocalDate
 
 internal class MemberTest {
@@ -26,6 +27,24 @@ internal class MemberTest {
         assertThat(updateMember.name).isEqualTo(name)
         assertThat(updateMember.birth).isEqualTo(Birthday(birth))
         assertThat(updateMember.profileImage).isEqualTo(ProfileImage(profileImage))
+    }
+
+    @Test
+    @DisplayName("가입한 최초에는 권한이 USER로 부여된다.")
+    fun saveRole() {
+        // given
+        val member = Member(
+            email = GivenMember.email,
+            password = GivenMember.password,
+            name = GivenMember.name,
+            nickname = GivenMember.nickname,
+            birth = GivenMember.birth,
+            profileImage = GivenMember.profileImage,
+            phoneNumber = GivenMember.phoneNumber
+        )
+
+        // then
+        assertThat(member.roleType).isEqualTo(RoleType.USER)
     }
 
     @Test
@@ -146,6 +165,7 @@ internal class MemberTest {
     }
 
     @Test
+    @DisplayName("아이디가 같으면 동일한 객체이다.")
     fun equalTest() {
         // given
         val member1 = GivenMember.toMember()
@@ -157,7 +177,6 @@ internal class MemberTest {
             name = "김딱구",
             nickname = "응애",
             birth = Birthday(LocalDate.of(1996, 11, 2)),
-            RoleType.USER,
             profileImage = GivenMember.profileImage,
             phoneNumber = "010-2344-1233"
         )
