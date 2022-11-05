@@ -29,10 +29,6 @@ class Member (
     @Embedded
     var birth: Birthday,
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    var roleType: RoleType,
-
     @Embedded
     var profileImage: ProfileImage,
 
@@ -46,6 +42,10 @@ class Member (
 
     @Column(nullable = false)
     var deleted: Boolean = false
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    var roleType: RoleType = RoleType.USER
 
     // 비즈니스 로직
     fun updateMember(nickname: String, name: String, birth: LocalDate, profileImage: String): Member {
