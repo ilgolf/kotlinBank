@@ -8,11 +8,14 @@ import me.golf.kotlin.domain.member.error.MemberNotFoundException
 import me.golf.kotlin.domain.member.model.Member
 import me.golf.kotlin.domain.member.model.UserEmail
 import me.golf.kotlin.domain.member.model.repository.MemberRepository
+import org.springframework.data.repository.findByIdOrNull
+import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 @Service
 class MemberCommandService(
-    private val memberRepository: MemberRepository
+    private val memberRepository: MemberRepository,
+    private val encoder: PasswordEncoder
 ) {
 
     @Transactional
@@ -20,41 +23,34 @@ class MemberCommandService(
         this.validateDuplicationEmail(saveDto.email)
         this.validateDuplicationNickname(saveDto.nickname)
 
-        return memberRepository.save(saveDto.toMemberEntity()).id
+        val member = saveDto.toMemberEntity().encodePassword(encoder)
+
+        return memberRepository.save(member).id
     }
 
     @Transactional
     fun update(requestDto: MemberUpdateRequestDto, memberId: Long) {
         val member = getMember(memberId)
 
-        if (member.nickname != requestDto.nickname) {
-            validateDuplicationNickname(requestDto.nickname)
-        }
+        check(member.nickname != requestDto.nickname) { validateDuplicationNickname(requestDto.nickname) }
 
         member.updateMember(requestDto.nickname, requestDto.name,
             requestDto.birthday.value, requestDto.profileImage.value)
     }
 
     @Transactional
-    fun delete(memberId: Long) {
-        getMember(memberId).delete()
-    }
+    fun delete(memberId: Long) = getMember(memberId).delete()
 
 
     private fun validateDuplicationNickname(nickname: String) {
-        if (memberRepository.existsByNickname(nickname)) {
-            throw DuplicateNicknameException(nickname)
-        }
+        check(!memberRepository.existsByNickname(nickname)) { throw DuplicateNicknameException(nickname) }
     }
 
     private fun validateDuplicationEmail(email: String) {
-        if (memberRepository.existsByEmail(UserEmail(email))) {
-            throw DuplicateEmailException(email)
-        }
+        check(!memberRepository.existsByEmail(UserEmail(email))) { throw DuplicateEmailException(email) }
     }
 
-    private fun getMember(memberId: Long): Member =
-        memberRepository.findById(memberId)
-            .orElseThrow { throw MemberNotFoundException(memberId) }
+    private fun getMember(memberId: Long) =
+        memberRepository.findByIdOrNull(memberId)?: throw MemberNotFoundException(memberId)
 }
 
