@@ -20,7 +20,6 @@ object GivenMember {
             name = name,
             nickname = nickname,
             birth = birth,
-            roleType = RoleType.USER,
             profileImage = profileImage,
             phoneNumber = phoneNumber
         )

@@ -66,6 +66,7 @@ dependencies {
 	testImplementation("org.springframework.security:spring-security-test")
 	testImplementation("org.testcontainers:junit-jupiter")
 	testImplementation("org.testcontainers:mysql")
+	testImplementation("io.mockk:mockk:1.12.8")
 }
 
 dependencyManagement {

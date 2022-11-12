@@ -1,6 +1,6 @@
 package me.golf.kotlin.global.jwt.dto
 
-class TokenBaseDto(
-    private var accessToken: String,
-    private var refreshToken: String
+data class TokenBaseDto(
+    var accessToken: String,
+    var refreshToken: String
 )

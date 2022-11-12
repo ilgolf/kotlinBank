@@ -1,13 +1,11 @@
 package me.golf.kotlin.domain.member.model
 
-import com.fasterxml.jackson.annotation.JsonValue
 import javax.persistence.Column
 import javax.persistence.Embeddable
 
 @Embeddable
 class ProfileImage (
     @Column(name = "profile_image_url", length = 100)
-    @JsonValue
     val value: String
     ) {
 

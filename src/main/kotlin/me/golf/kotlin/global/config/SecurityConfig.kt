@@ -30,7 +30,7 @@ class SecurityConfig(
 ) {
 
     companion object {
-        private const val PUBLIC_POINT = "/public/**"
+        private const val PUBLIC_POINT = "/api/v2/public/**"
     }
 
     @Bean

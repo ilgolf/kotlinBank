@@ -7,8 +7,7 @@ import javax.persistence.Embeddable
 
 @Embeddable
 class Birthday (
-    @Column(name = "birth", columnDefinition = "datetime")
-    @JsonValue
+    @Column(name = "birth", columnDefinition = "date")
     val value: LocalDate
 ) {
 
