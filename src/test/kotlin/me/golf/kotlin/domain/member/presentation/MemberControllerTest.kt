@@ -43,7 +43,8 @@ internal class MemberControllerTest {
             phoneNumber = GivenMember.phoneNumber,
             birth = GivenMember.birth.value,
             profileImageUrl = GivenMember.profileImage.value,
-            passwordConfirm = GivenMember.password
+            passwordConfirm = GivenMember.password,
+            isPhoneConfirm = true
         )
 
         every { memberCommandService.save(any()) } returns 2L
@@ -116,8 +117,8 @@ internal class MemberControllerTest {
         val requestDto = MemberApiUpdateRequestDto(
             name = "updateName",
             nickname = "updateNickname",
-            profileImage = GivenMember.profileImage,
-            birthday = Birthday(LocalDate.of(1998, 11, 2))
+            profileImage = GivenMember.profileImage.value,
+            birth = Birthday(LocalDate.of(1998, 11, 2)).value
         )
 
         member.id = 2L

@@ -1,37 +1,50 @@
 package me.golf.kotlin.domain.member.dto.request
 
+import com.fasterxml.jackson.annotation.JsonFormat
+import com.fasterxml.jackson.annotation.JsonProperty
 import java.time.LocalDate
 import javax.validation.constraints.NotBlank
+import javax.validation.constraints.NotNull
 
 data class MemberApiSaveRequestDto (
 
-    @NotBlank(message = "필수 값입니다.")
-    private var email: String,
+    @field:NotBlank(message = "필수 값입니다.")
+    @JsonProperty("email")
+    var email: String,
 
-    @NotBlank(message = "필수 값입니다.")
-    private var password: String,
+    @field:NotBlank(message = "필수 값입니다.")
+    @JsonProperty("password")
+    var password: String,
 
-    @NotBlank(message = "필수 값입니다.")
-    private var passwordConfirm: String,
+    @field:NotBlank(message = "필수 값입니다.")
+    @JsonProperty("passwordConfirm")
+    var passwordConfirm: String,
 
-    @NotBlank(message = "필수 값입니다.")
-    private var name: String,
+    @field:NotBlank(message = "필수 값입니다.")
+    @JsonProperty("name")
+    var name: String,
 
-    @NotBlank(message = "필수 값입니다.")
-    private var nickname: String,
+    @field:NotBlank(message = "필수 값입니다.")
+    @JsonProperty("nickname")
+    var nickname: String,
 
-    @NotBlank(message = "필수 값입니다.")
-    private var birth: LocalDate,
+    @field:NotNull(message = "필수 값입니다.")
+    @JsonProperty("birth")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    var birth: LocalDate,
 
-    @NotBlank(message = "필수 값입니다.")
-    private var profileImageUrl: String,
+    @field:NotBlank(message = "필수 값입니다.")
+    @JsonProperty("profileImageUrl")
+    var profileImageUrl: String,
 
-    @NotBlank(message = "필수 값입니다.")
-    private var phoneNumber: String
+    @field:NotBlank(message = "필수 값입니다.")
+    @JsonProperty("phoneNumber")
+    var phoneNumber: String,
+
+    @field:NotNull(message = "필수 값입니다.")
+    @JsonProperty("isPhoneConfirm")
+    var isPhoneConfirm: Boolean
 ) {
 
-    fun toServiceDto(): MemberSaveRequestDto {
-        return MemberSaveRequestDto(email, password, name, nickname, birth, profileImageUrl, phoneNumber)
-    }
+    fun toServiceDto() = MemberSaveRequestDto(email, password, name, nickname, birth, profileImageUrl, phoneNumber)
 }
-
