@@ -19,6 +19,7 @@ import org.assertj.core.api.Assertions.*
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertAll
+import org.mockito.ArgumentMatchers.anyLong
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
 import org.springframework.http.HttpStatus
@@ -137,7 +138,8 @@ internal class MemberControllerTest {
     fun delete() {
         // given
         val customUserDetails = CustomUserDetails.of(GivenMember.toMember())
-        every { memberCommandService.delete(any()) } returns Unit
+
+        every { memberCommandService.delete(anyLong()) } returns Unit
 
         // when
         val response = memberController.delete(customUserDetails = customUserDetails)

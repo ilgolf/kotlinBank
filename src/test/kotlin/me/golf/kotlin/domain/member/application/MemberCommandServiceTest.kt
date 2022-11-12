@@ -10,6 +10,7 @@ import me.golf.kotlin.domain.member.error.MemberNotFoundException
 import me.golf.kotlin.domain.member.model.ProfileImage
 import me.golf.kotlin.domain.member.model.repository.MemberRepository
 import me.golf.kotlin.domain.member.util.GivenMember
+import me.golf.kotlin.domain.member.util.TestPasswordEncoder
 import org.assertj.core.api.Assertions.*
 import org.junit.jupiter.api.Test
 
@@ -20,7 +21,8 @@ import java.util.*
 internal class MemberCommandServiceTest {
 
     private val memberRepository: MemberRepository = mockk()
-    private val memberCommandService = MemberCommandService(memberRepository)
+    private val encoder = TestPasswordEncoder.init()
+    private val memberCommandService = MemberCommandService(memberRepository, encoder)
 
     @Test
     @DisplayName("회원을 저장한다.")

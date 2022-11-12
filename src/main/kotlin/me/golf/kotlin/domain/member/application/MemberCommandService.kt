@@ -5,13 +5,13 @@ import me.golf.kotlin.domain.member.dto.request.MemberUpdateRequestDto
 import me.golf.kotlin.domain.member.error.DuplicateEmailException
 import me.golf.kotlin.domain.member.error.DuplicateNicknameException
 import me.golf.kotlin.domain.member.error.MemberNotFoundException
-import me.golf.kotlin.domain.member.model.Member
 import me.golf.kotlin.domain.member.model.UserEmail
 import me.golf.kotlin.domain.member.model.repository.MemberRepository
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+
 @Service
 class MemberCommandService(
     private val memberRepository: MemberRepository,
@@ -32,14 +32,18 @@ class MemberCommandService(
     fun update(requestDto: MemberUpdateRequestDto, memberId: Long) {
         val member = getMember(memberId)
 
-        check(member.nickname != requestDto.nickname) { validateDuplicationNickname(requestDto.nickname) }
+        if (member.nickname != requestDto.nickname) {
+            validateDuplicationNickname(requestDto.nickname)
+        }
 
         member.updateMember(requestDto.nickname, requestDto.name,
             requestDto.birthday.value, requestDto.profileImage.value)
     }
 
     @Transactional
-    fun delete(memberId: Long) = getMember(memberId).delete()
+    fun delete(memberId: Long) {
+        getMember(memberId).delete()
+    }
 
 
     private fun validateDuplicationNickname(nickname: String) {
