@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import me.golf.kotlin.global.exception.error.ErrorCode
 import org.springframework.validation.BindingResult
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException
-import java.util.stream.Collectors
+import kotlin.streams.toList
 
 
 class ErrorResponse(
@@ -56,7 +56,7 @@ class ErrorResponse(
                         error?.defaultMessage ?: ""
                     )
                 }
-                .collect(Collectors.toList())
+                .toList()
 
             fun of(field: String, value: String, reason: String): List<FieldCustomError> {
                 val fieldErrors: MutableList<FieldCustomError> = ArrayList()

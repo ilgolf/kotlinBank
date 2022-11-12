@@ -7,6 +7,7 @@ import me.golf.kotlin.domain.member.error.MemberNotFoundException
 import me.golf.kotlin.domain.member.model.repository.MemberRepository
 import me.golf.kotlin.global.common.PageCustomResponse
 import org.springframework.data.domain.Pageable
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -17,13 +18,14 @@ class MemberQueryService(
 
     @Transactional(readOnly = true)
     fun getDetail(memberId: Long): MemberApiDetailDto {
-        return memberRepository.findById(memberId)
-            .map { m -> MemberApiDetailDto.of(m) }
-            .orElseThrow { throw MemberNotFoundException(memberId) }
+
+        val member = memberRepository.findByIdOrNull(memberId) ?: throw MemberNotFoundException(memberId)
+        return MemberApiDetailDto.of(member)
     }
 
     @Transactional(readOnly = true)
     fun search(requestDto: MemberSearchRequestDto?, pageable: Pageable): PageCustomResponse<MemberApiShortResponseDto> {
+
         if (requestDto == null) {
             return PageCustomResponse.emptyPage()
         }
