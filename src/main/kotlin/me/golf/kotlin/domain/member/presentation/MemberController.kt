@@ -6,6 +6,8 @@ import me.golf.kotlin.domain.member.dto.request.MemberApiSaveRequestDto
 import me.golf.kotlin.domain.member.dto.request.MemberApiSearchRequestDto
 import me.golf.kotlin.domain.member.dto.request.MemberApiUpdateRequestDto
 import me.golf.kotlin.domain.member.dto.response.SimpleMemberResponse
+import me.golf.kotlin.domain.member.error.PhoneConfirmDeniedException
+import me.golf.kotlin.global.exception.error.ErrorCode
 import me.golf.kotlin.global.security.CustomUserDetails
 import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
@@ -28,10 +30,12 @@ class MemberController(
 ) {
 
     @PostMapping("/public/members")
-    fun save(@Valid @RequestBody memberApiSaveRequestDto: MemberApiSaveRequestDto): ResponseEntity<SimpleMemberResponse> {
+    fun save(@Valid @RequestBody requestDto: MemberApiSaveRequestDto): ResponseEntity<SimpleMemberResponse> {
+
+        check(requestDto.isPhoneConfirm) { throw PhoneConfirmDeniedException(requestDto.phoneNumber) }
 
         return ResponseEntity.status(HttpStatus.CREATED)
-            .body(SimpleMemberResponse(memberCommandService.save(memberApiSaveRequestDto.toServiceDto()), true))
+            .body(SimpleMemberResponse(memberCommandService.save(requestDto.toServiceDto()), true))
     }
 
     @GetMapping("/members/detail")

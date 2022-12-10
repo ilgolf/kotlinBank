@@ -2,7 +2,6 @@ package me.golf.kotlin.global.exception
 
 import me.golf.kotlin.global.exception.error.BusinessException
 import me.golf.kotlin.global.exception.error.ErrorCode
-import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity

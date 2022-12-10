@@ -61,6 +61,12 @@ dependencies {
 	kapt("com.querydsl:querydsl-apt:5.0.0:jpa")
 	kapt("org.hibernate.javax.persistence:hibernate-jpa-2.1-api:1.0.2.Final")
 
+	//coolSMS
+	implementation("net.nurigo:sdk:4.2.4")
+
+	// redis transaction
+	implementation("org.springframework:spring-tx:5.3.24")
+
 	// test
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("org.springframework.security:spring-security-test")

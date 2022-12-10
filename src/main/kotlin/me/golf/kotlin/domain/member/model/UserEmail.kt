@@ -10,11 +10,6 @@ class UserEmail(
     @JsonValue
     val value: String) {
 
-    fun getHost(): String {
-        val index = value.indexOf("@")
-        return value.substring(index + 1)
-    }
-
     fun getId(): String {
         val index = value.indexOf("@")
         return value.substring(0, index)
