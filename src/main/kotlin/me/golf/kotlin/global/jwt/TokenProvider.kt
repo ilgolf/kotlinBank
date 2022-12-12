@@ -58,6 +58,7 @@ class TokenProvider(
             .compact()
 
         val refreshToken = Jwts.builder()
+            .claim("memberId", memberId.toString())
             .setExpiration(refreshTokenExpiredTime)
             .signWith(key, SignatureAlgorithm.HS512)
             .compact()
@@ -65,7 +66,7 @@ class TokenProvider(
         return TokenBaseDto(accessToken = accessToken, refreshToken = refreshToken)
     }
 
-    fun getAuthentication(token: String?): Authentication {
+    fun getAuthentication(token: String): Authentication {
         val claims = Jwts.parserBuilder()
             .setSigningKey(key)
             .build()

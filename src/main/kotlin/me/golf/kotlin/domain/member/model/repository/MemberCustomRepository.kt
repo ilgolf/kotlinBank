@@ -9,7 +9,8 @@ import java.util.Optional
 
 interface MemberCustomRepository {
 
-    fun getDetailById(memberId: Long): Optional<CustomUserDetails>
+    fun getDetailById(memberId: Long): CustomUserDetails?
 
     fun findAllBySearchDto(requestDto: MemberSearchRequestDto, pageable: Pageable): Page<MemberApiShortResponseDto>
+    fun getDetailByEmail(email: String): CustomUserDetails?
 }
