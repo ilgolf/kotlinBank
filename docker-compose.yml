@@ -40,9 +40,6 @@ services:
       - /Users/nogyeongtae/Shared/data/golf-redis:/var/lib/redis
 
   app:
-    build:
-      context: .
-      dockerfile: Dockerfile
     container_name: bank
     ports:
       - "8083:8091"

@@ -1,3 +1,6 @@
 package me.golf.kotlin.domain.member.error
 
-class MemberNotFoundException(memberId: Long) : RuntimeException("회원을 찾을 수 없습니다. $memberId")
+import me.golf.kotlin.global.exception.error.BusinessException
+import me.golf.kotlin.global.exception.error.ErrorCode
+
+class MemberNotFoundException(memberId: Long) : BusinessException(ErrorCode.MEMBER_NOT_FOUND, memberId.toString())

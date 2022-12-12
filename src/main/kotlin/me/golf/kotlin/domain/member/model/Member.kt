@@ -58,11 +58,7 @@ class Member (
     }
 
     fun matchPassword(passwordEncoder: PasswordEncoder, rawPassword: String): Boolean {
-        if (passwordEncoder.matches(rawPassword, this.password)) {
-            return true
-        }
-
-        return false
+        return passwordEncoder.matches(rawPassword, this.password)
     }
 
     fun encodePassword(passwordEncoder: PasswordEncoder): Member {

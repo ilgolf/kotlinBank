@@ -29,3 +29,9 @@ jwt:
   secret: c2lsdmVybmluZS10ZWNoLXNwcmluZy1ib290LWp3dC10dXRvcmlhbC1zZWNyZXQtc2lsdmVybmluZS10ZWNoLXNwcmluZy1ib290LWp3dC10dXRvcmlhbC1zZWNyZXQK
   accessToken-validity-in-seconds: 7200 # 1??
   refreshToken-validity-in-seconds: 18000 # 5??
+
+cool-sms:
+  api-key: NCSMKAJHX6H1MSBX
+  api-secret: RF237SZAATQK1KCVOOHU1EW33RUNECV8
+  domain: https://api.coolsms.co.kr
+  phone-number: 01050626098
