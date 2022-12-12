@@ -89,5 +89,7 @@ class SmsIntegrationTest
         // then
         perform.andExpect(status().isOk)
             .andDo(print())
+
+        memberRepository.delete(member)
     }
 }

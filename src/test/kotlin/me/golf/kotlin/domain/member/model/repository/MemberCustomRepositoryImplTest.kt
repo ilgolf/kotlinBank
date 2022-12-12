@@ -4,6 +4,7 @@ import me.golf.kotlin.commonutil.JpaTest
 import me.golf.kotlin.domain.member.dto.request.MemberSearchRequestDto
 import me.golf.kotlin.domain.member.error.MemberNotFoundException
 import me.golf.kotlin.domain.member.model.Member
+import me.golf.kotlin.domain.member.model.UserEmail
 import me.golf.kotlin.domain.member.util.GivenMember
 import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.*
@@ -39,7 +40,7 @@ internal class MemberCustomRepositoryImplTest
 
         // when
         val customUserDetails = memberRepository.getDetailById(member.id)
-            .orElseThrow { throw MemberNotFoundException(member.id) }
+            ?: throw MemberNotFoundException(member.id)
 
         // then
         assertThat(customUserDetails.memberId).isEqualTo(member.id)
@@ -69,5 +70,18 @@ internal class MemberCustomRepositoryImplTest
 
         // then
         assertThat(memberResponses.size).isEqualTo(1)
+    }
+
+    @Test
+    @DisplayName("이메일로 회원인증 정보를 가져온다.")
+    fun getDetailByEmail() {
+        // given
+        val email = GivenMember.email.value
+
+        // when
+        val userDetails = memberRepository.getDetailByEmail(email)
+
+        // then
+        assertThat(userDetails?.email).isEqualTo(UserEmail(email))
     }
 }

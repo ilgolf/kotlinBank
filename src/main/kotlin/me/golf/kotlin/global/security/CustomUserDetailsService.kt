@@ -14,9 +14,9 @@ class CustomUserDetailsService(
 ) : UserDetailsService {
 
     @Cacheable(value = [RedisPolicy.AUTH_KEY], key = "#memberId")
-    override fun loadUserByUsername(memberId: String): UserDetails {
+    override fun loadUserByUsername(memberId: String): CustomUserDetails =
+        memberRepository.getDetailById(memberId.toLong())?: throw MemberNotFoundException(memberId.toLong())
 
-        return memberRepository.getDetailById(memberId.toLong())
-            .orElseThrow { throw MemberNotFoundException(memberId.toLong()) }
-    }
+    @Cacheable(value = [RedisPolicy.AUTH_KEY], key = "#email")
+    fun loadUserByEmail(email: String) = memberRepository.getDetailByEmail(email)?: throw MemberNotFoundException()
 }
