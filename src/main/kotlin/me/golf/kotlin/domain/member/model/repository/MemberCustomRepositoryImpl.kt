@@ -6,6 +6,7 @@ import me.golf.kotlin.domain.member.dto.response.MemberApiShortResponseDto
 import me.golf.kotlin.domain.member.dto.request.MemberSearchRequestDto
 import me.golf.kotlin.domain.member.dto.response.QMemberApiShortResponseDto
 import me.golf.kotlin.domain.member.model.QMember
+import me.golf.kotlin.domain.member.model.QMember.*
 import me.golf.kotlin.global.security.CustomUserDetails
 import me.golf.kotlin.global.security.QCustomUserDetails
 import org.springframework.data.domain.Page
@@ -19,17 +20,15 @@ class MemberCustomRepositoryImpl(
     private val queryFactory: JPAQueryFactory
 ) : MemberCustomRepository {
 
-    override fun getDetailById(memberId: Long): Optional<CustomUserDetails> {
-        return Optional.ofNullable(
-            queryFactory.select(
+    override fun getDetailById(memberId: Long): CustomUserDetails? {
+        return queryFactory.select(
                 QCustomUserDetails(
-                    QMember.member.id,
-                    QMember.member.email,
-                    QMember.member.roleType))
-                .from(QMember.member)
-                .where(QMember.member.id.eq(memberId))
+                    member.id,
+                    member.email,
+                    member.roleType))
+                .from(member)
+                .where(member.id.eq(memberId))
                 .fetchFirst()
-        )
     }
 
     override fun findAllBySearchDto(
@@ -39,25 +38,25 @@ class MemberCustomRepositoryImpl(
 
         val data = queryFactory.select(
             QMemberApiShortResponseDto(
-                QMember.member.email,
-                QMember.member.name,
-                QMember.member.profileImage)
+                member.email,
+                member.name,
+                member.profileImage)
         )
-            .from(QMember.member)
+            .from(member)
             .where(
                 eqEmail(requestDto.email),
                 eqNickname(requestDto.nickname))
             .offset(pageable.offset)
             .limit(pageable.pageSize.toLong())
-            .orderBy(QMember.member.id.desc())
+            .orderBy(member.id.desc())
             .fetch()
 
         if (data.size == 0) {
             return Page.empty()
         }
 
-        val count = queryFactory.select(QMember.member.count())
-            .from(QMember.member)
+        val count = queryFactory.select(member.count())
+            .from(member)
             .where(
                 eqEmail(requestDto.email),
                 eqNickname(requestDto.nickname))
@@ -65,12 +64,25 @@ class MemberCustomRepositoryImpl(
         return PageableExecutionUtils.getPage(data, pageable, count::fetchFirst)
     }
 
+    override fun getDetailByEmail(email: String): CustomUserDetails? {
+        return queryFactory.select(
+            QCustomUserDetails(
+                member.id,
+                member.email,
+                member.roleType
+            )
+        )
+            .from(member)
+            .where(member.email.value.eq(email))
+            .fetchFirst()
+    }
+
     private fun eqNickname(nickname: String?): BooleanExpression? {
         if (nickname == null) {
             return null
         }
 
-        return QMember.member.nickname.like("$nickname%")
+        return member.nickname.like("$nickname%")
     }
 
     private fun eqEmail(email: String?): BooleanExpression? {
@@ -78,6 +90,6 @@ class MemberCustomRepositoryImpl(
             return null
         }
 
-        return QMember.member.email.value.like("$email%")
+        return member.email.value.like("$email%")
     }
 }

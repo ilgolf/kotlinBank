@@ -4,6 +4,7 @@ import me.golf.kotlin.global.jwt.JwtSecurityConfig
 import me.golf.kotlin.global.jwt.TokenProvider
 import me.golf.kotlin.global.jwt.error.JwtAccessDeniedHandler
 import me.golf.kotlin.global.jwt.error.JwtAuthenticationEntryPoint
+import me.golf.kotlin.global.security.CustomAuthenticationProvider
 import me.golf.kotlin.global.security.CustomUserDetailsService
 import org.springframework.context.annotation.Bean
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity
@@ -31,6 +32,11 @@ class SecurityConfig(
 
     companion object {
         private const val PUBLIC_POINT = "/api/v2/public/**"
+    }
+
+    @Bean
+    fun customAuthenticationProvider(): CustomAuthenticationProvider? {
+        return CustomAuthenticationProvider()
     }
 
     @Bean

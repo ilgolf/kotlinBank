@@ -13,7 +13,7 @@ class JwtFilter(private val tokenProvider: TokenProvider) : GenericFilterBean() 
 
     override fun doFilter(request: ServletRequest, response: ServletResponse, chain: FilterChain) {
         val httpServletRequest = request as HttpServletRequest
-        val jwt = resolveToken(httpServletRequest)
+        val jwt = resolveToken(httpServletRequest)?: ""
         val requestURI = httpServletRequest.requestURI
 
         if (StringUtils.hasText(jwt) && tokenProvider.validateToken(jwt)) {
