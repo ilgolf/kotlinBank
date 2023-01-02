@@ -22,7 +22,7 @@ spring:
     open-in-view: false
 
   redis:
-    host: localhost
+    host: redis
     port: 6379
 
 jwt:

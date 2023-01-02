@@ -118,12 +118,14 @@ internal class MemberTest {
     fun getAge() {
         // given
         val member = GivenMember.toMember()
+        val thisYear = LocalDate.now().year
+        val myBirthYear = GivenMember.birth.value.year
 
         // when
         val age = member.getAge()
 
         // then
-        assertThat(age).isEqualTo(26)
+        assertThat(age).isEqualTo(thisYear - myBirthYear)
     }
 
     @Test

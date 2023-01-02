@@ -20,8 +20,10 @@ import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDate
 
+@Transactional
 class MemberIntegrationTest
 @Autowired constructor(
     private val memberRepository: MemberRepository,
