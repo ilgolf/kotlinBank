@@ -1,8 +1,6 @@
 package me.golf.kotlin.domain.member.sms.repository
 
-interface AuthNumberRepository {
+import me.golf.kotlin.domain.member.sms.model.AuthNumber
+import org.springframework.data.repository.CrudRepository
 
-    fun saveAuthNumber(key: String, secureNumber: Int) // ex. 1234-1234
-
-    fun getAuthNumber(key: String): Int?
-}
+interface AuthNumberRepository: CrudRepository<AuthNumber, String>

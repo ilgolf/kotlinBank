@@ -1,6 +1,7 @@
 package me.golf.kotlin.domain.member.model
 
 import com.fasterxml.jackson.annotation.JsonValue
+import java.io.Serializable
 import javax.persistence.Column
 import javax.persistence.Embeddable
 
@@ -8,7 +9,7 @@ import javax.persistence.Embeddable
 class UserEmail(
     @Column(name = "email", unique = true, nullable = false)
     @JsonValue
-    val value: String) {
+    val value: String): Serializable {
 
     fun getId(): String {
         val index = value.indexOf("@")

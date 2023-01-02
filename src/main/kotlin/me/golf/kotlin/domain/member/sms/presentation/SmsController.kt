@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController
 import javax.validation.Valid
 
 @RestController
-@RequestMapping("/api/v2/members/phone")
+@RequestMapping("/api/v2/public/members/phone")
 class SmsController(
     private val smsService: SmsService
 ) {
