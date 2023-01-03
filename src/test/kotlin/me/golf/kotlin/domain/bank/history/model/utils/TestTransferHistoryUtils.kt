@@ -1,5 +1,6 @@
 package me.golf.kotlin.domain.bank.history.model.utils
 
+import me.golf.kotlin.domain.bank.GivenBankAccount
 import me.golf.kotlin.domain.bank.history.model.TransferHistory
 import me.golf.kotlin.domain.member.model.Birthday
 import me.golf.kotlin.domain.member.model.Member
@@ -21,6 +22,8 @@ object TestTransferHistoryUtils {
             transferMoney,
             fromMemberId,
             toMemberId,
+            1L,
+            GivenBankAccount.mockBankAccount(),
             fromMember,
             getToMember()
         )
