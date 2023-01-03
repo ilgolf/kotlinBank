@@ -7,14 +7,13 @@ import me.golf.kotlin.domain.member.sms.application.SmsService
 import me.golf.kotlin.domain.member.sms.error.SecureNumberNotFoundException
 import me.golf.kotlin.domain.member.sms.error.SendFailException
 import me.golf.kotlin.domain.member.sms.repository.AuthNumberRepository
-import me.golf.kotlin.domain.member.util.GivenAuthNumber
+import me.golf.kotlin.domain.member.util.TestAuthNumberUtils
 import me.golf.kotlin.domain.member.util.GivenMember
 import me.golf.kotlin.global.common.SingleCustomMessageSentResponse
 import org.assertj.core.api.Assertions.*
 import org.junit.jupiter.api.Test
 
 import org.junit.jupiter.api.DisplayName
-import org.springframework.data.repository.findByIdOrNull
 
 internal class SmsServiceTest {
 
@@ -34,8 +33,6 @@ internal class SmsServiceTest {
             country = "korea",
         )
 
-        every { authNumberRepository.save(any()) } returns GivenAuthNumber.toEntity()
-
         // when
         val response = smsService.sendAuthNumber(phoneNumber)
 
@@ -50,7 +47,7 @@ internal class SmsServiceTest {
         val phoneNumber = "010-5062-6098"
         val authNumber = 1234
 
-        every { authNumberRepository.findByIdOrNull(any()) } returns GivenAuthNumber.toEntity()
+        every { authNumberRepository.findByIdOrNull(any()) } returns TestAuthNumberUtils.authNumber.toString()
 
         // when
         val result = smsService.authorizePhoneNumber(phoneNumber, authNumber)
@@ -83,7 +80,6 @@ internal class SmsServiceTest {
         val phoneNumber = GivenMember.phoneNumber
 
         every { messageService.sendOne(any()) } throws SendFailException(phoneNumber)
-        every { authNumberRepository.save(any()) } returns GivenAuthNumber.toEntity()
 
         // when
         val exception = catchException { smsService.sendAuthNumber(phoneNumber) }

@@ -1,17 +1,13 @@
 package me.golf.kotlin.domain.member.sms.application
 
 import me.golf.kotlin.domain.member.sms.error.SecureNumberNotFoundException
-import me.golf.kotlin.domain.member.sms.model.AuthNumber
 import me.golf.kotlin.domain.member.sms.repository.AuthNumberRepository
-import me.golf.kotlin.global.common.RedisPolicy
 import me.golf.kotlin.global.common.SingleCustomMessageSentResponse
 import net.nurigo.sdk.message.model.Message
 import net.nurigo.sdk.message.model.MessageType
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
 import java.security.SecureRandom
 
 @Service
@@ -37,9 +33,7 @@ class SmsService(
         val message = Message(
             from = PHONE_NUMBER, to = phoneNumber, type = MessageType.SMS, text = "인증 번호는 [$randomNumber] 입니다.")
 
-        val authNumber = AuthNumber(phoneNumber.substring(4), randomNumber.toString().toInt())
-
-        authNumberRepository.save(authNumber)
+        authNumberRepository.save(phoneNumber.substring(4), randomNumber.toString())
 
         return messageService.sendOne(message)
     }
@@ -49,6 +43,6 @@ class SmsService(
         val secureNumber = authNumberRepository.findByIdOrNull(phoneNumber.substring(4))
             ?: throw SecureNumberNotFoundException(phoneNumber)
 
-        return secureNumber.authNumber == authNumber
+        return secureNumber.toInt() == authNumber
     }
 }
