@@ -1,6 +1,7 @@
 package me.golf.kotlin.domain.bank
 
 import me.golf.kotlin.domain.bank.model.BankAccount
+import java.math.BigDecimal
 
 object GivenBankAccount {
 
@@ -10,6 +11,7 @@ object GivenBankAccount {
     private const val bankName = "신한"
     private const val pk = 1L
     private const val name = "별칭입니다."
+    private val balance = BigDecimal(8000)
 
     fun mockBankAccount(): BankAccount {
         return BankAccount(
@@ -17,6 +19,7 @@ object GivenBankAccount {
             password = password,
             memberId = memberId,
             bankName = bankName,
+            balance = balance,
             name = name
         )
     }

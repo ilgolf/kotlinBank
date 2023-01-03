@@ -1,5 +1,6 @@
 package me.golf.kotlin.domain.bank.history.model
 
+import me.golf.kotlin.domain.bank.GivenBankAccount
 import me.golf.kotlin.domain.bank.history.model.utils.TestTransferHistoryUtils
 import me.golf.kotlin.domain.member.util.GivenMember
 import org.assertj.core.api.Assertions
@@ -19,6 +20,8 @@ internal class TransferHistoryTest {
             fromMemberId = 1L,
             toMemberId = 2L,
             from = GivenMember.toMember(),
+            bankId = 1L,
+            bankAccount = GivenBankAccount.mockBankAccount(),
             to = TestTransferHistoryUtils.getToMember()
         )
 
