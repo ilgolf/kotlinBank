@@ -2,8 +2,10 @@ package me.golf.kotlin.domain.bank.model
 
 import lombok.AccessLevel
 import lombok.NoArgsConstructor
+import me.golf.kotlin.domain.bank.error.TooMuchTransferAmountException
 import me.golf.kotlin.domain.member.model.Member
 import org.springframework.security.crypto.password.PasswordEncoder
+import java.math.BigDecimal
 import javax.persistence.*
 
 @Entity
@@ -21,6 +23,9 @@ class BankAccount(
 
     @Column(length = 10, nullable = false)
     var bankName: String,
+
+    @Column(name = "balance", nullable = false)
+    var balance: BigDecimal,
 
     @Column(name = "account_name")
     var name: String,
@@ -51,6 +56,10 @@ class BankAccount(
     fun updateAccountName(name: String): BankAccount {
         this.name = name
         return this;
+    }
+
+    fun validTransferPossibility(transferAmount: BigDecimal) {
+        check(this.balance < transferAmount) { throw TooMuchTransferAmountException() }
     }
 
     override fun equals(other: Any?): Boolean {

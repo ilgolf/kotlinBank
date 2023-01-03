@@ -20,4 +20,8 @@ enum class ErrorCode(val message: String, val status: Int) {
     SEND_FAIL_ERROR("문자 전송에 실패했습니다.", 400),
     SECURE_NUMBER_NOT_FOUND("인증번호를 찾을 수 없습니다. 다시 시도해주세요", 400),
     INVALID_REFRESH_TOKEN("올바르지 않은 토큰이 들어왔습니다. 다시 로그인 바랍니다.", 401),
+
+    // bank
+    INVALID_TO_AND_FROM_SAME("송금할 대상 회원과 송금 회원이 같을 수 없습니다.", 400),
+    TOO_MUCH_AMOUNT("송금할 금액이 잔고보다 크면 안됩니다.", 400),
 }
