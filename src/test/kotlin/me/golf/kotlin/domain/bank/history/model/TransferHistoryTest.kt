@@ -3,7 +3,6 @@ package me.golf.kotlin.domain.bank.history.model
 import me.golf.kotlin.domain.bank.GivenBankAccount
 import me.golf.kotlin.domain.bank.history.model.utils.TestTransferHistoryUtils
 import me.golf.kotlin.domain.member.util.GivenMember
-import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.*
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -17,12 +16,9 @@ internal class TransferHistoryTest {
         // given
         val givenTransferHistory = TransferHistory(
             transferMoney = BigDecimal.valueOf(6000),
-            fromMemberId = 1L,
-            toMemberId = 2L,
-            from = GivenMember.toMember(),
+            depositor = 1L,
             bankId = 1L,
             bankAccount = GivenBankAccount.mockBankAccount(),
-            to = TestTransferHistoryUtils.getToMember()
         )
 
         val transferHistory = TestTransferHistoryUtils.toEntity()

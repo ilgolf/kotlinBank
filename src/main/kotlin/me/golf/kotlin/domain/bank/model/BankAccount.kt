@@ -48,9 +48,8 @@ class BankAccount(
         return this
     }
 
-    fun matchPassword(passwordEncoder: PasswordEncoder, rawPassword: String): BankAccount {
-        passwordEncoder.matches(rawPassword, this.password)
-        return this
+    fun matchPassword(passwordEncoder: PasswordEncoder, rawPassword: String): Boolean {
+        return passwordEncoder.matches(rawPassword, this.password)
     }
 
     fun updateAccountName(name: String): BankAccount {
@@ -59,7 +58,7 @@ class BankAccount(
     }
 
     fun validTransferPossibility(transferAmount: BigDecimal) {
-        check(this.balance < transferAmount) { throw TooMuchTransferAmountException() }
+        check(this.balance > transferAmount) { throw TooMuchTransferAmountException() }
     }
 
     override fun equals(other: Any?): Boolean {

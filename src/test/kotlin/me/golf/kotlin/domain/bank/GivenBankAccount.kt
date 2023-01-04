@@ -5,13 +5,13 @@ import java.math.BigDecimal
 
 object GivenBankAccount {
 
-    private const val number = "1234-1234567-1234-56"
-    private const val password = "1234"
-    private const val memberId = 1L
-    private const val bankName = "신한"
-    private const val pk = 1L
-    private const val name = "별칭입니다."
-    private val balance = BigDecimal(8000)
+    const val number = "1234-1234567-1234-56"
+    const val password = "1234"
+    const val memberId = 1L
+    const val bankName = "신한"
+    const val pk = 1L
+    const val name = "별칭입니다."
+    val balance = BigDecimal(8000)
 
     fun mockBankAccount(): BankAccount {
         return BankAccount(
