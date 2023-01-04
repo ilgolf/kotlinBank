@@ -73,6 +73,19 @@ internal class MemberCustomRepositoryImplTest
     }
 
     @Test
+    @DisplayName("조건에 맞는 존재하지 않으면 빈 값을 반환한다.")
+    fun returnEmpty() {
+        // given
+        val requestDto = MemberSearchRequestDto("fdsfds", null)
+
+        // when
+        val memberResponse = memberRepository.findAllBySearchDto(requestDto, PageRequest.of(0, 10)).content
+
+        // then
+        assertThat(memberResponse).isEmpty()
+    }
+
+    @Test
     @DisplayName("이메일로 회원인증 정보를 가져온다.")
     fun getDetailByEmail() {
         // given

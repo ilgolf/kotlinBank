@@ -16,10 +16,7 @@ class TransferHistory(
     var transferMoney: BigDecimal,
 
     @Column(name = "from_member_id", nullable = false)
-    var fromMemberId: Long,
-
-    @Column(name = "to_member_id", nullable = false)
-    var toMemberId: Long,
+    var depositor: Long,
 
     @Column(name = "bank_id", nullable = false)
     var bankId: Long,
@@ -27,25 +24,11 @@ class TransferHistory(
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "bank_id", nullable = false, insertable = false, updatable = false)
     var bankAccount: BankAccount,
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "from_member_id", updatable = false, insertable = false)
-    var from: Member,
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "to_member_id", updatable = false, insertable = false)
-    var to: Member
 ): BaseTimeEntity() {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "transfer_history_id", updatable = false, nullable = false)
     var id: Long = 0
-
-    fun validToAndFromSame(to: Member, from: Member) {
-        if (to == from) {
-            throw InvalidByToAndFromSameException()
-        }
-    }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
