@@ -17,7 +17,7 @@ import org.testcontainers.junit.jupiter.Testcontainers
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
-class IntegrationTest {
+class IntegrationTest: TestContainer(){
 
     @Autowired
     lateinit var mockMvc: MockMvc
