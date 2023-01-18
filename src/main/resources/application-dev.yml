@@ -8,7 +8,7 @@ spring:
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://mysql_db/bank
+    url: jdbc:mysql://mysql-bank:3306/bank
     username: nokt
     password: 1234
 
@@ -26,7 +26,7 @@ spring:
     port: 6379
 
 jwt:
-  secret: c2lsdmVybmluZS10ZWNoLXNwcmluZy1ib290LWp3dC10dXRvcmlhbC1zZWNyZXQtc2lsdmVybmluZS10ZWNoLXNwcmluZy1ib290LWp3dC10dXRvcmlhbC1zZWNyZXQK
+  secret: ${SECRET_KEY}
   accessToken-validity-in-seconds: 7200 # 1??
   refreshToken-validity-in-seconds: 18000 # 5??
 

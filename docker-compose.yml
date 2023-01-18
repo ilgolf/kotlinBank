@@ -10,7 +10,7 @@ services:
       - --character-set-server=utf8mb4
       - --collation-server=utf8mb4_unicode_ci
 
-    container_name: mysql-test-7
+    container_name: mysql-bank
     ports:
       - "3307:3306"
     environment:
@@ -26,7 +26,7 @@ services:
       - /Users/nogyeongtae/Shared/data/golf-mysql:/var/lib/mysql
 
   redis:
-    image: redis:7.0.7-alpine
+    image: redis:latest
     command: redis-server --port 6379
     container_name: redis
     hostname: redis
@@ -40,10 +40,10 @@ services:
       - /Users/nogyeongtae/Shared/data/golf-redis:/var/lib/redis
 
   app:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: ilgolf/bank:latest
     container_name: bank
+    environment:
+      - 'SECRET_KEY=c2lsdmVybmluZS10ZWNoLXNwcmluZy1ib290LWp3dC10dXRvcmlhbC1zZWNyZXQtc2lsdmVybmluZS10ZWNoLXNwcmluZy1ib290LWp3dC10dXRvcmlhbC1zZWNyZXQK'
     ports:
       - "8083:8091"
     depends_on:
