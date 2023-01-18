@@ -24,4 +24,5 @@ enum class ErrorCode(val message: String, val status: Int) {
     // bank
     INVALID_TO_AND_FROM_SAME("송금할 대상 회원과 송금 회원이 같을 수 없습니다.", 400),
     TOO_MUCH_AMOUNT("송금할 금액이 잔고보다 크면 안됩니다.", 400),
+    FIN_ACCOUNT_NOT_FOUND("핀어카운트를 발급받는데 실패했습니다.", 400),
 }

@@ -1,13 +1,14 @@
-package me.golf.kotlin.domain.bank
+package me.golf.kotlin.domain.bank.presentation
 
 import io.mockk.every
 import io.mockk.mockk
+import me.golf.kotlin.domain.bank.BalanceResponseDto
+import me.golf.kotlin.domain.bank.TestBankAccountUtils
 import me.golf.kotlin.domain.bank.application.BankAccountCommandService
 import me.golf.kotlin.domain.bank.application.BankAccountQueryService
 import me.golf.kotlin.domain.bank.dto.*
 import me.golf.kotlin.domain.bank.history.dto.HistorySummaryResponseDto
 import me.golf.kotlin.domain.bank.history.model.utils.TestTransferHistoryUtils
-import me.golf.kotlin.domain.bank.presentation.BankAccountController
 import me.golf.kotlin.domain.member.util.GivenMember
 import me.golf.kotlin.global.common.SliceCustomResponse
 import me.golf.kotlin.global.security.CustomUserDetails
@@ -40,10 +41,10 @@ class BankAccountControllerTest {
     fun save() {
         // given
         val reqDto = BankAccountSaveApiRequestDto(
-            name = GivenBankAccount.name,
-            bankName = GivenBankAccount.bankName,
-            password = GivenBankAccount.password,
-            number = GivenBankAccount.number
+            name = TestBankAccountUtils.name,
+            bankName = TestBankAccountUtils.bankName,
+            password = TestBankAccountUtils.password,
+            number = TestBankAccountUtils.number
         )
 
         val resDto = SimpleBankAccountIdResponseDto(1L)
@@ -64,9 +65,9 @@ class BankAccountControllerTest {
         val bankAccountId = 1L
 
         val summaryResDto = BankAccountSummaryResponseDto(
-            name = GivenBankAccount.name,
-            bankName = GivenBankAccount.bankName,
-            number = GivenBankAccount.number
+            name = TestBankAccountUtils.name,
+            bankName = TestBankAccountUtils.bankName,
+            number = TestBankAccountUtils.number
         )
 
         val historySummaryResDto = HistorySummaryResponseDto(
@@ -111,10 +112,10 @@ class BankAccountControllerTest {
         val bankAccountId = 1L
         val requestDto = BankAccountUpdateRequestDto("변경된 닉네임입니다.")
 
-        every { bankAccountCommandService.update(any(), any()) } returns Unit
+        every { bankAccountCommandService.update(any(), any(), any()) } returns Unit
 
         // when
-        val result: ResponseEntity<Unit> = bankAccountController.update(requestDto, bankAccountId)
+        val result: ResponseEntity<Unit> = bankAccountController.update(requestDto, customUserDetails, bankAccountId)
 
         // then
         assertThat(result.statusCode).isEqualTo(HttpStatus.OK)

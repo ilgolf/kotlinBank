@@ -2,9 +2,7 @@ package me.golf.kotlin.domain.bank.history.model
 
 import lombok.AccessLevel
 import lombok.NoArgsConstructor
-import me.golf.kotlin.domain.bank.history.error.InvalidByToAndFromSameException
 import me.golf.kotlin.domain.bank.model.BankAccount
-import me.golf.kotlin.domain.member.model.Member
 import me.golf.kotlin.global.common.BaseTimeEntity
 import java.math.BigDecimal
 import javax.persistence.*
@@ -12,7 +10,6 @@ import javax.persistence.*
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 class TransferHistory(
-    @Embedded
     var transferMoney: BigDecimal,
 
     @Column(name = "from_member_id", nullable = false)

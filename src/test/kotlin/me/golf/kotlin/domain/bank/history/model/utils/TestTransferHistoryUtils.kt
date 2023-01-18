@@ -1,6 +1,6 @@
 package me.golf.kotlin.domain.bank.history.model.utils
 
-import me.golf.kotlin.domain.bank.GivenBankAccount
+import me.golf.kotlin.domain.bank.TestBankAccountUtils
 import me.golf.kotlin.domain.bank.history.model.TransferHistory
 import java.math.BigDecimal
 
@@ -14,7 +14,7 @@ object TestTransferHistoryUtils {
             transferMoney,
             depositor,
             1L,
-            GivenBankAccount.mockBankAccount(),
+            TestBankAccountUtils.mockBankAccount(),
         )
     }
 }
