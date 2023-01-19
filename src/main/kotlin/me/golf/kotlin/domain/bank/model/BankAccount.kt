@@ -18,14 +18,14 @@ class BankAccount(
     @Column(name = "account_password", length = 200, nullable = false)
     var password: String,
 
+    @Column(name = "fin_account", length = 120, nullable = false)
+    var finAccount: String,
+
     @Column(name = "member_id")
     var memberId: Long,
 
     @Column(length = 10, nullable = false)
     var bankName: String,
-
-    @Column(name = "balance", nullable = false)
-    var balance: BigDecimal,
 
     @Column(name = "account_name")
     var name: String,
@@ -54,11 +54,11 @@ class BankAccount(
 
     fun updateAccountName(name: String): BankAccount {
         this.name = name
-        return this;
+        return this
     }
 
-    fun validTransferPossibility(transferAmount: BigDecimal) {
-        check(this.balance > transferAmount) { throw TooMuchTransferAmountException() }
+    fun delete() {
+        this.deleted = true
     }
 
     override fun equals(other: Any?): Boolean {

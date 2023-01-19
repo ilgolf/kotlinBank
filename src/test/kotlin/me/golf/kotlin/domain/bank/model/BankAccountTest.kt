@@ -1,18 +1,15 @@
 package me.golf.kotlin.domain.bank.model
 
-import me.golf.kotlin.domain.bank.GivenBankAccount
+import me.golf.kotlin.domain.bank.TestBankAccountUtils
 import me.golf.kotlin.domain.bank.error.TooMuchTransferAmountException
 import me.golf.kotlin.domain.member.util.TestPasswordEncoder
-import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
-import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.DisplayName
 import org.springframework.security.crypto.password.PasswordEncoder
 import java.math.BigDecimal
-import java.util.TooManyListenersException
 
 internal class BankAccountTest {
 
@@ -22,7 +19,7 @@ internal class BankAccountTest {
     @BeforeEach
     fun init() {
         encoder = TestPasswordEncoder.init()
-        bankAccount = GivenBankAccount.mockBankAccount()
+        bankAccount = TestBankAccountUtils.mockBankAccount()
     }
 
     @Test
@@ -32,7 +29,7 @@ internal class BankAccountTest {
         val encodedAccount = bankAccount.encodePassword(encoder)
 
         // then
-        assertThat(encodedAccount.password).isNotEqualTo(GivenBankAccount.password)
+        assertThat(encodedAccount.password).isNotEqualTo(TestBankAccountUtils.password)
     }
 
     @Test
@@ -42,7 +39,7 @@ internal class BankAccountTest {
         val encodedAccount = bankAccount.encodePassword(encoder)
 
         // when
-        val isMatch = encodedAccount.matchPassword(encoder, GivenBankAccount.password)
+        val isMatch = encodedAccount.matchPassword(encoder, TestBankAccountUtils.password)
 
         // then
         assertThat(isMatch).isTrue
@@ -59,18 +56,5 @@ internal class BankAccountTest {
 
         // then
         assertThat(updateAccount.name).isEqualTo("goods")
-    }
-
-    @Test
-    @DisplayName("송금할 수 있는 금액이 아니면 예외를 발생시킨다.")
-    fun validateTransferPossibility() {
-        // given
-        val transferAmount = BigDecimal(9000)
-
-        // when
-        val exception = catchException { bankAccount.validTransferPossibility(transferAmount) }
-
-        // then
-        assertThat(exception).isInstanceOf(TooMuchTransferAmountException::class.java)
     }
 }

@@ -60,10 +60,11 @@ class BankAccountController(
     @PatchMapping("/{bankAccountId}")
     fun update(
         @Valid @RequestBody requestDto: BankAccountUpdateRequestDto,
+        @AuthenticationPrincipal customUserDetails: CustomUserDetails,
         @PathVariable bankAccountId: Long
     ): ResponseEntity<Unit> {
 
-        bankAccountCommandService.update(requestDto.nickname, bankAccountId)
+        bankAccountCommandService.update(requestDto.nickname, bankAccountId, customUserDetails.memberId)
         return ResponseEntity.ok().build()
     }
 
