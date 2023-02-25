@@ -22,7 +22,10 @@ enum class ErrorCode(val message: String, val status: Int) {
     INVALID_REFRESH_TOKEN("올바르지 않은 토큰이 들어왔습니다. 다시 로그인 바랍니다.", 401),
 
     // bank
-    INVALID_TO_AND_FROM_SAME("송금할 대상 회원과 송금 회원이 같을 수 없습니다.", 400),
-    TOO_MUCH_AMOUNT("송금할 금액이 잔고보다 크면 안됩니다.", 400),
     FIN_ACCOUNT_NOT_FOUND("핀어카운트를 발급받는데 실패했습니다.", 400),
+    BANK_ACCOUNT_NOT_FOUND("계좌가 존재하지 않습니다.", 400),
+    DUPLICATE_ACCOUNT_NUMBER("이미 존재하는 계좌번호입니다.", 400),
+    DUPLICATE_ACCOUNT_NICKNAME("이미 존재하는 계좌 별칭입니다.", 400),
+    CONVERT_BANK_NAME_DENIED("변경 불가능한 은행 이름입니다. 확인해주세요", 400),
+    TRY_LOCK_DENIED("정상적인 접근이 아닙니다.", 400),
 }

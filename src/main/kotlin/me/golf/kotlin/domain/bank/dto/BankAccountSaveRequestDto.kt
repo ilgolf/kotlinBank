@@ -1,10 +1,11 @@
 package me.golf.kotlin.domain.bank.dto
 
 import me.golf.kotlin.domain.bank.model.BankAccount
+import me.golf.kotlin.domain.bank.model.BankName
 
 data class BankAccountSaveRequestDto(
     val name: String,
-    val bankName: String,
+    val bankName: BankName,
     val password: String,
     val number: String,
     val memberId: Long

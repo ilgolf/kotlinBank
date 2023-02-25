@@ -2,12 +2,13 @@ package me.golf.kotlin.domain.bank.presentation
 
 import io.mockk.every
 import io.mockk.mockk
-import me.golf.kotlin.domain.bank.BalanceResponseDto
 import me.golf.kotlin.domain.bank.TestBankAccountUtils
 import me.golf.kotlin.domain.bank.application.BankAccountCommandService
 import me.golf.kotlin.domain.bank.application.BankAccountQueryService
 import me.golf.kotlin.domain.bank.dto.*
+import me.golf.kotlin.domain.bank.history.application.TransferHistoryService
 import me.golf.kotlin.domain.bank.history.dto.HistorySummaryResponseDto
+import me.golf.kotlin.domain.bank.history.model.TransferStatus
 import me.golf.kotlin.domain.bank.history.model.utils.TestTransferHistoryUtils
 import me.golf.kotlin.domain.member.util.GivenMember
 import me.golf.kotlin.global.common.SliceCustomResponse
@@ -20,8 +21,8 @@ import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.SliceImpl
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import java.math.BigDecimal
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 class BankAccountControllerTest {
 
@@ -29,11 +30,12 @@ class BankAccountControllerTest {
     private lateinit var bankAccountController: BankAccountController
     private val bankAccountCommandService = mockk<BankAccountCommandService>()
     private val bankAccountQueryService = mockk<BankAccountQueryService>()
+    private val transferHistoryService = mockk<TransferHistoryService>()
 
     @BeforeEach
     fun init() {
         customUserDetails = CustomUserDetails.of(GivenMember.toMember())
-        bankAccountController = BankAccountController(bankAccountCommandService, bankAccountQueryService)
+        bankAccountController = BankAccountController(bankAccountCommandService, bankAccountQueryService, transferHistoryService)
     }
 
     @Test
@@ -64,42 +66,29 @@ class BankAccountControllerTest {
         // given
         val bankAccountId = 1L
 
-        val summaryResDto = BankAccountSummaryResponseDto(
+        val summaryResDto = BankAccountDetailResponseDto(
             name = TestBankAccountUtils.name,
             bankName = TestBankAccountUtils.bankName,
-            number = TestBankAccountUtils.number
+            number = TestBankAccountUtils.number,
+            balance = TestBankAccountUtils.balance
         )
 
         val historySummaryResDto = HistorySummaryResponseDto(
             transferMoney = TestTransferHistoryUtils.transferMoney,
-            depositor = TestTransferHistoryUtils.depositor,
+            client = TestTransferHistoryUtils.client,
+            transferStatus = TransferStatus.DEPOSIT,
             memberNickname = GivenMember.nickname,
-            createdAt = LocalDate.now()
+            createdAt = LocalDateTime.now()
         )
 
         val resDtos = SliceImpl(arrayListOf(historySummaryResDto), PageRequest.of(0, 10), true)
 
         every { bankAccountQueryService.getBankAccountSummary(any(), any()) } returns summaryResDto
-        every { bankAccountQueryService.getHistory(any(), any()) } returns SliceCustomResponse.of(resDtos)
+        every { transferHistoryService.getHistories(any(), any(), any()) } returns SliceCustomResponse.of(resDtos)
 
         // when
-        val result: ResponseEntity<BankAccountInfoResponseDto> = bankAccountController.getBankAccountSummary(bankAccountId, customUserDetails)
-
-        // then
-        assertThat(result.statusCode).isEqualTo(HttpStatus.OK)
-    }
-
-    @Test
-    @DisplayName("계좌 잔액을 조회에 성공하면 200OK")
-    fun getBalance() {
-        // given
-        val bankAccountId = 1L
-        val resDto = BalanceResponseDto(BigDecimal(60000))
-
-        every { bankAccountQueryService.getBalance(any(), any()) } returns resDto
-
-        // when
-        val result: ResponseEntity<BalanceResponseDto> = bankAccountController.getBalance(bankAccountId, customUserDetails)
+        val result: ResponseEntity<BankAccountInfoResponseDto> = bankAccountController
+            .getBankAccountSummary(bankAccountId, customUserDetails, PageRequest.of(0, 10))
 
         // then
         assertThat(result.statusCode).isEqualTo(HttpStatus.OK)
@@ -134,5 +123,23 @@ class BankAccountControllerTest {
 
         // then
         assertThat(result.statusCode).isEqualTo(HttpStatus.NO_CONTENT)
+    }
+
+    @Test
+    @DisplayName("사용자가 갖고 있는 계좌를 모두 조회한다.")
+    fun getBankAccountsByMemberId() {
+        // given
+        val responseDto = arrayListOf(
+            BankAccountSummaryResponseDto(1L, TestBankAccountUtils.balance, TestBankAccountUtils.bankName)
+        )
+
+        every { bankAccountQueryService.getBankAccountsByMemberId(any()) } returns responseDto
+
+        // when
+        val result: ResponseEntity<List<BankAccountSummaryResponseDto>> =
+            bankAccountController.getBankAccountsByMemberId(customUserDetails)
+
+        // then
+        assertThat(result.statusCode).isEqualTo(HttpStatus.OK)
     }
 }

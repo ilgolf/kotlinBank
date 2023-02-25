@@ -1,30 +1,26 @@
 package me.golf.kotlin.domain.bank.presentation
 
-import me.golf.kotlin.domain.bank.BalanceResponseDto
 import me.golf.kotlin.domain.bank.application.BankAccountCommandService
 import me.golf.kotlin.domain.bank.application.BankAccountQueryService
 import me.golf.kotlin.domain.bank.dto.BankAccountInfoResponseDto
 import me.golf.kotlin.domain.bank.dto.BankAccountSaveApiRequestDto
 import me.golf.kotlin.domain.bank.dto.BankAccountUpdateRequestDto
 import me.golf.kotlin.domain.bank.dto.SimpleBankAccountIdResponseDto
+import me.golf.kotlin.domain.bank.history.application.TransferHistoryService
 import me.golf.kotlin.global.security.CustomUserDetails
+import org.springframework.data.domain.Pageable
+import org.springframework.data.web.PageableDefault
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
-import org.springframework.web.bind.annotation.DeleteMapping
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PatchMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import javax.validation.Valid
 
 @RestController
 @RequestMapping("/api/v2/bank-accounts")
 class BankAccountController(
     private val bankAccountCommandService: BankAccountCommandService,
-    private val bankAccountQueryService: BankAccountQueryService
+    private val bankAccountQueryService: BankAccountQueryService,
+    private val transferHistoryService: TransferHistoryService
 ) {
 
     @PostMapping
@@ -39,23 +35,27 @@ class BankAccountController(
     @GetMapping("/{bankAccountId}")
     fun getBankAccountSummary(
         @PathVariable bankAccountId: Long,
-        @AuthenticationPrincipal customUserDetails: CustomUserDetails
+        @AuthenticationPrincipal customUserDetails: CustomUserDetails,
+        @PageableDefault pageable: Pageable
     ): ResponseEntity<BankAccountInfoResponseDto> {
 
-        val bankAccountSummaryResponseDto = bankAccountQueryService.getBankAccountSummary(bankAccountId, customUserDetails.memberId)
-        val historyResponseDto = bankAccountQueryService.getHistory(bankAccountId, customUserDetails.memberId)
+        val bankAccountSummaryResponseDto =
+            bankAccountQueryService.getBankAccountSummary(bankAccountId, customUserDetails.memberId)
+        val historyResponseDto =
+            transferHistoryService.getHistories(bankAccountId, customUserDetails.memberId, pageable)
 
         return ResponseEntity.ok(BankAccountInfoResponseDto(bankAccountSummaryResponseDto, historyResponseDto))
     }
 
-    @GetMapping("/balance/{bankAccountId}")
-    fun getBalance(
-        @PathVariable bankAccountId: Long,
-        @AuthenticationPrincipal customUserDetails: CustomUserDetails
-    ): ResponseEntity<BalanceResponseDto> {
+    @GetMapping
+    fun getBankAccountsByMemberId(@AuthenticationPrincipal customUserDetails: CustomUserDetails) =
+        ResponseEntity.ok(bankAccountQueryService.getBankAccountsByMemberId(customUserDetails.memberId))
 
-        return ResponseEntity.ok(bankAccountQueryService.getBalance(bankAccountId, customUserDetails.memberId))
-    }
+    @PatchMapping("/balance/{bankAccountId}")
+    fun updateBalance(@AuthenticationPrincipal customUserDetails: CustomUserDetails,
+                      @PathVariable bankAccountId: Long) =
+
+        bankAccountQueryService.getBalance(bankAccountId, customUserDetails.memberId)
 
     @PatchMapping("/{bankAccountId}")
     fun update(

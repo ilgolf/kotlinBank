@@ -1,11 +1,14 @@
 package me.golf.kotlin.global.config
 
+import io.netty.channel.ChannelOption
+import io.netty.handler.logging.LogLevel
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.client.reactive.ReactorClientHttpConnector
 import org.springframework.web.reactive.function.client.WebClient
 import reactor.netty.http.client.HttpClient
 import reactor.netty.resources.ConnectionProvider
+import reactor.netty.transport.logging.AdvancedByteBufFormat
 import java.time.Duration
 
 @Configuration
@@ -22,14 +25,15 @@ class WebClientConfig {
             .build()
 
         return HttpClient.create(provider)
+            .wiretap("reactor.netty.http.client.HttpClient", LogLevel.DEBUG, AdvancedByteBufFormat.TEXTUAL)
+            .responseTimeout(Duration.ofSeconds(3))
+            .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 4000)
     }
 
     @Bean
-    fun webClient(): WebClient {
-
-        return WebClient.builder()
+    fun webClient() =
+        WebClient.builder()
             .clientConnector(ReactorClientHttpConnector(httpClient()))
-            .defaultHeader("user-agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.87 Safari/537.3")
+            .filter(LoggingRequestFilter())
             .build()
-    }
 }

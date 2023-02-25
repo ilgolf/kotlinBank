@@ -1,6 +1,5 @@
 package me.golf.kotlin.global.exception
 
-import com.fasterxml.jackson.annotation.JsonProperty
 import me.golf.kotlin.global.exception.error.ErrorCode
 import org.springframework.validation.BindingResult
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException
@@ -8,14 +7,8 @@ import kotlin.streams.toList
 
 
 class ErrorResponse(
-
-    @JsonProperty("message")
     var message: String,
-
-    @JsonProperty("status")
     var status: Int,
-
-    @JsonProperty("errors")
     var errors: List<FieldCustomError>
 ) {
 
@@ -36,14 +29,8 @@ class ErrorResponse(
     }
 
     class FieldCustomError(
-
-        @JsonProperty("field")
         var field: String,
-
-        @JsonProperty("value")
         var value: String,
-
-        @JsonProperty("reason")
         var reason: String
     ) {
 
