@@ -4,6 +4,6 @@ import me.golf.kotlin.domain.bank.history.dto.HistorySummaryResponseDto
 import me.golf.kotlin.global.common.SliceCustomResponse
 
 data class BankAccountInfoResponseDto (
-    val bankAccountSummaryResponseDto: BankAccountSummaryResponseDto,
+    val bankAccountDetailResponseDto: BankAccountDetailResponseDto,
     val historySummaryResponseDto: SliceCustomResponse<HistorySummaryResponseDto>
 )

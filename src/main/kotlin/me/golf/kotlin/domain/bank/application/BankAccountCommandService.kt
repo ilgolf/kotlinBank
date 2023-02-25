@@ -1,60 +1,74 @@
 package me.golf.kotlin.domain.bank.application
 
-import me.golf.kotlin.domain.bank.client.NHApiClient
+import me.golf.kotlin.domain.bank.client.BankAccountApiClient
 import me.golf.kotlin.domain.bank.dto.BankAccountSaveRequestDto
+import me.golf.kotlin.domain.bank.dto.PublishFinAccountRequestDto
 import me.golf.kotlin.domain.bank.dto.SimpleBankAccountIdResponseDto
-import me.golf.kotlin.domain.bank.error.FinAccountNotFoundException
+import me.golf.kotlin.domain.bank.error.BankAccountException
 import me.golf.kotlin.domain.bank.model.BankAccountRepository
-import me.golf.kotlin.domain.bank.utils.NhHeaderValueUtils
-import org.springframework.data.repository.findByIdOrNull
+import me.golf.kotlin.domain.member.application.MemberQueryService
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.security.SecureRandom
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
-import javax.security.auth.login.AccountNotFoundException
 
 @Service
 @Transactional
 class BankAccountCommandService(
     private val bankAccountRepository: BankAccountRepository,
     private val encoder: PasswordEncoder,
-    private val nhApiClient: NHApiClient
+    private val bankAccountApiClient: BankAccountApiClient,
+    private val memberQueryService: MemberQueryService,
+    private val bankAccountLockService: BankAccountLockService
 ) {
 
     fun save(requestDto: BankAccountSaveRequestDto): SimpleBankAccountIdResponseDto {
 
-        val randomNumber = StringBuilder()
-        val secureRandom = SecureRandom()
+        try {
+            if (!bankAccountLockService.tryLock(requestDto.name)) {
+                throw BankAccountException.AlreadyLockException()
+            }
 
-        for (i in 1..9) {
-            val number = secureRandom.nextInt(10)
-            randomNumber.append(number)
+            this.validateDuplicationByAccountNumber(requestDto.number)
+            this.validationDuplicationByName(requestDto.name)
+
+            val member = memberQueryService.getDetail(requestDto.memberId)
+
+            // 우선 무조건 입출금 가능 이 후 변경 ?
+            val finAccountRequestDto = PublishFinAccountRequestDto
+                .of(true, member.birth.getStringValue(), requestDto.bankName.code, requestDto.number)
+
+            val bankAccount = requestDto
+                .toEntity(getFinAccount(finAccountRequestDto))
+                .encodePassword(encoder)
+
+            return SimpleBankAccountIdResponseDto(bankAccountRepository.save(bankAccount).id)
+        } finally {
+            bankAccountLockService.unlock(requestDto.name)
         }
-
-        val finAccount = nhApiClient.getFinAccountConnection(randomNumber.toString())
-            .flux()
-            .toStream()
-            .findFirst()
-            .orElseThrow { throw FinAccountNotFoundException() }
-
-        val bankAccount = requestDto.toEntity(finAccount).encodePassword(encoder)
-
-        return SimpleBankAccountIdResponseDto(bankAccountRepository.save(bankAccount).id)
     }
 
     fun update(nickname: String, bankAccountId: Long, memberId: Long) {
         val bankAccount = bankAccountRepository.findByIdAndMemberId(bankAccountId, memberId)
-            ?: throw AccountNotFoundException()
+            ?: throw BankAccountException.NotFoundException()
 
         bankAccount.updateAccountName(nickname)
     }
 
     fun delete(bankAccountId: Long, memberId: Long) {
         val bankAccount = bankAccountRepository.findByIdAndMemberId(bankAccountId, memberId)
-            ?: throw AccountNotFoundException()
+            ?: throw BankAccountException.NotFoundException()
 
         bankAccount.delete()
+    }
+
+    private fun getFinAccount(finAccountRequestDto: PublishFinAccountRequestDto) =
+        bankAccountApiClient.getFinAccountConnection(finAccountRequestDto)
+
+    private fun validationDuplicationByName(name: String) {
+        check(!bankAccountRepository.existsByName(name)) { throw BankAccountException.NameDuplicationException(name) }
+    }
+
+    private fun validateDuplicationByAccountNumber(number: String) {
+        check(!bankAccountRepository.existsByNumber(number)) { throw BankAccountException.NumberDuplicationException(number) }
     }
 }

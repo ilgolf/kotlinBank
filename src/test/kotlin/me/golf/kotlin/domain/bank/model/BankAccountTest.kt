@@ -1,7 +1,6 @@
 package me.golf.kotlin.domain.bank.model
 
 import me.golf.kotlin.domain.bank.TestBankAccountUtils
-import me.golf.kotlin.domain.bank.error.TooMuchTransferAmountException
 import me.golf.kotlin.domain.member.util.TestPasswordEncoder
 import org.assertj.core.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
@@ -9,7 +8,6 @@ import org.junit.jupiter.api.Test
 
 import org.junit.jupiter.api.DisplayName
 import org.springframework.security.crypto.password.PasswordEncoder
-import java.math.BigDecimal
 
 internal class BankAccountTest {
 

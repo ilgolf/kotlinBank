@@ -1,16 +1,17 @@
 package me.golf.kotlin.domain.bank
 
 import me.golf.kotlin.domain.bank.model.BankAccount
-import java.math.BigDecimal
+import me.golf.kotlin.domain.bank.model.BankName
 
 object TestBankAccountUtils {
 
     const val number = "1234-1234567-1234-56"
     const val password = "1234"
     const val memberId = 1L
-    const val bankName = "신한"
+    const val bankName = "신한은행"
     const val pk = 1L
     const val name = "별칭입니다."
+    const val balance = "45600"
 
     fun mockBankAccount(): BankAccount {
         return BankAccount(
@@ -18,7 +19,18 @@ object TestBankAccountUtils {
             password = password,
             finAccount = "finAccount",
             memberId = memberId,
-            bankName = bankName,
+            bankName = BankName.of(bankName),
+            name = name
+        )
+    }
+
+    fun createBankAccountBy(memberId: Long): BankAccount {
+        return BankAccount(
+            number = number,
+            password = password,
+            finAccount = "finAccount",
+            memberId = memberId,
+            bankName = BankName.of(bankName),
             name = name
         )
     }

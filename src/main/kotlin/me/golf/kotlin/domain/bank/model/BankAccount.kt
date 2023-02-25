@@ -2,17 +2,17 @@ package me.golf.kotlin.domain.bank.model
 
 import lombok.AccessLevel
 import lombok.NoArgsConstructor
-import me.golf.kotlin.domain.bank.error.TooMuchTransferAmountException
 import me.golf.kotlin.domain.member.model.Member
+import org.hibernate.annotations.Where
 import org.springframework.security.crypto.password.PasswordEncoder
-import java.math.BigDecimal
 import javax.persistence.*
 
+@Where(clause = "deleted = false")
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "Account")
 class BankAccount(
-    @Column(length = 30, unique = true, nullable = false)
+    @Column(length = 30, unique = false, nullable = false)
     var number: String,
 
     @Column(name = "account_password", length = 200, nullable = false)
@@ -24,10 +24,11 @@ class BankAccount(
     @Column(name = "member_id")
     var memberId: Long,
 
+    @Enumerated(EnumType.STRING)
     @Column(length = 10, nullable = false)
-    var bankName: String,
+    var bankName: BankName,
 
-    @Column(name = "account_name")
+    @Column(name = "account_name", unique = false)
     var name: String,
 ) {
 

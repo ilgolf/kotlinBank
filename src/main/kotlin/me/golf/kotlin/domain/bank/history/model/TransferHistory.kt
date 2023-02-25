@@ -12,20 +12,24 @@ import javax.persistence.*
 class TransferHistory(
     var transferMoney: BigDecimal,
 
-    @Column(name = "from_member_id", nullable = false)
-    var depositor: Long,
+    @Column(name = "client_id", nullable = false)
+    var client: Long,
 
     @Column(name = "bank_id", nullable = false)
     var bankId: Long,
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "bank_id", nullable = false, insertable = false, updatable = false)
-    var bankAccount: BankAccount,
+    @Column(name = "transfer_status", nullable = false)
+    @Enumerated(EnumType.STRING)
+    var transferStatus: TransferStatus
 ): BaseTimeEntity() {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "transfer_history_id", updatable = false, nullable = false)
     var id: Long = 0
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "bank_id", nullable = false, insertable = false, updatable = false)
+    lateinit var bankAccount: BankAccount
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

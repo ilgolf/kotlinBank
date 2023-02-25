@@ -1,7 +1,7 @@
 package me.golf.kotlin.domain.member.model
 
-import com.fasterxml.jackson.annotation.JsonValue
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import javax.persistence.Column
 import javax.persistence.Embeddable
 
@@ -13,6 +13,11 @@ class Birthday (
 
     fun getAge(): Int {
         return LocalDate.now().year - this.value.year
+    }
+
+    fun getStringValue(): String{
+        val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("YYYYMMDD")
+        return this.value.format(formatter)
     }
 
     fun validateExceedNowYear(birth: LocalDate): Boolean {
