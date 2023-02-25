@@ -2,18 +2,17 @@ package me.golf.kotlin.domain.account.application
 
 import io.mockk.every
 import io.mockk.mockk
-import me.golf.kotlin.domain.account.error.InvalidRefreshTokenException
+import me.golf.kotlin.domain.account.error.AccountException
 import me.golf.kotlin.domain.member.util.GivenMember
 import me.golf.kotlin.global.jwt.TokenProvider
 import me.golf.kotlin.global.jwt.dto.TokenBaseDto
 import me.golf.kotlin.global.security.CustomUserDetails
 import me.golf.kotlin.global.security.CustomUserDetailsService
-import org.assertj.core.api.Assertions
-import org.assertj.core.api.Assertions.*
-import org.junit.jupiter.api.Test
-
-import org.junit.jupiter.api.Assertions.*
+import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.catchException
+import org.junit.jupiter.api.Assertions.assertAll
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Test
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
 
@@ -80,6 +79,6 @@ internal class AccountServiceTest {
         val exception = catchException { accountService.reissue(refreshToken) }
 
         // then
-        assertThat(exception).isInstanceOf(InvalidRefreshTokenException::class.java)
+        assertThat(exception).isInstanceOf(AccountException.InvalidRefreshTokenException::class.java)
     }
 }
