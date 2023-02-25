@@ -4,17 +4,15 @@ import io.mockk.every
 import io.mockk.mockk
 import me.golf.kotlin.domain.member.dto.request.MemberSaveRequestDto
 import me.golf.kotlin.domain.member.dto.request.MemberUpdateRequestDto
-import me.golf.kotlin.domain.member.error.DuplicateEmailException
-import me.golf.kotlin.domain.member.error.DuplicateNicknameException
-import me.golf.kotlin.domain.member.error.MemberNotFoundException
+import me.golf.kotlin.domain.member.error.MemberException
 import me.golf.kotlin.domain.member.model.ProfileImage
 import me.golf.kotlin.domain.member.model.repository.MemberRepository
 import me.golf.kotlin.domain.member.util.GivenMember
 import me.golf.kotlin.domain.member.util.TestPasswordEncoder
-import org.assertj.core.api.Assertions.*
-import org.junit.jupiter.api.Test
-
+import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.catchException
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertAll
 import java.util.*
 
@@ -75,7 +73,7 @@ internal class MemberCommandServiceTest {
         val exception = catchException { memberCommandService.save(reqDto) }
 
         // then
-        assertThat(exception).isInstanceOf(DuplicateEmailException::class.java)
+        assertThat(exception).isInstanceOf(MemberException.DuplicateEmailException::class.java)
     }
 
     @Test
@@ -125,7 +123,7 @@ internal class MemberCommandServiceTest {
         val exception = catchException { memberCommandService.update(reqDto, memberId = member.id) }
 
         // then
-        assertThat(exception).isInstanceOf(DuplicateNicknameException::class.java)
+        assertThat(exception).isInstanceOf(MemberException.DuplicateNicknameException::class.java)
     }
 
     @Test
@@ -154,6 +152,6 @@ internal class MemberCommandServiceTest {
         val exception = catchException { memberCommandService.delete(3L) }
 
         // then
-        assertThat(exception).isInstanceOf(MemberNotFoundException::class.java)
+        assertThat(exception).isInstanceOf(MemberException.MemberNotFoundException::class.java)
     }
 }

@@ -2,21 +2,20 @@ package me.golf.kotlin.domain.member.application
 
 import io.mockk.every
 import io.mockk.mockk
-import me.golf.kotlin.domain.member.dto.response.MemberApiShortResponseDto
 import me.golf.kotlin.domain.member.dto.request.MemberSearchRequestDto
-import me.golf.kotlin.domain.member.error.MemberNotFoundException
+import me.golf.kotlin.domain.member.dto.response.MemberApiShortResponseDto
+import me.golf.kotlin.domain.member.error.MemberException
 import me.golf.kotlin.domain.member.model.Member
 import me.golf.kotlin.domain.member.model.UserEmail
 import me.golf.kotlin.domain.member.model.repository.MemberRepository
 import me.golf.kotlin.domain.member.util.GivenMember
-import org.assertj.core.api.Assertions.*
-import org.junit.jupiter.api.Test
-
+import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.catchException
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Test
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
 import java.util.*
-import kotlin.collections.ArrayList
 
 internal class MemberQueryServiceTest {
 
@@ -49,7 +48,7 @@ internal class MemberQueryServiceTest {
         val exception = catchException { memberQueryService.getDetail(2L) }
 
         // then
-        assertThat(exception).isInstanceOf(MemberNotFoundException::class.java)
+        assertThat(exception).isInstanceOf(MemberException.MemberNotFoundException::class.java)
     }
 
     @Test

@@ -2,17 +2,14 @@ package me.golf.kotlin.domain.member.model.repository
 
 import me.golf.kotlin.commonutil.JpaTest
 import me.golf.kotlin.domain.member.dto.request.MemberSearchRequestDto
-import me.golf.kotlin.domain.member.error.MemberNotFoundException
+import me.golf.kotlin.domain.member.error.MemberException
 import me.golf.kotlin.domain.member.model.Member
 import me.golf.kotlin.domain.member.model.UserEmail
 import me.golf.kotlin.domain.member.util.GivenMember
-import org.assertj.core.api.Assertions
-import org.assertj.core.api.Assertions.*
-import org.junit.jupiter.api.Test
-
-import org.junit.jupiter.api.Assertions.*
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.PageRequest
 import org.springframework.security.test.context.support.WithMockUser
@@ -40,7 +37,7 @@ internal class MemberCustomRepositoryImplTest
 
         // when
         val customUserDetails = memberRepository.getDetailById(member.id)
-            ?: throw MemberNotFoundException(member.id)
+            ?: throw MemberException.MemberNotFoundException(member.id)
 
         // then
         assertThat(customUserDetails.memberId).isEqualTo(member.id)

@@ -2,9 +2,7 @@ package me.golf.kotlin.domain.member.application
 
 import me.golf.kotlin.domain.member.dto.request.MemberSaveRequestDto
 import me.golf.kotlin.domain.member.dto.request.MemberUpdateRequestDto
-import me.golf.kotlin.domain.member.error.DuplicateEmailException
-import me.golf.kotlin.domain.member.error.DuplicateNicknameException
-import me.golf.kotlin.domain.member.error.MemberNotFoundException
+import me.golf.kotlin.domain.member.error.MemberException
 import me.golf.kotlin.domain.member.model.UserEmail
 import me.golf.kotlin.domain.member.model.repository.MemberRepository
 import org.springframework.data.repository.findByIdOrNull
@@ -47,14 +45,14 @@ class MemberCommandService(
 
 
     private fun validateDuplicationNickname(nickname: String) {
-        check(!memberRepository.existsByNickname(nickname)) { throw DuplicateNicknameException(nickname) }
+        check(!memberRepository.existsByNickname(nickname)) { throw MemberException.DuplicateNicknameException(nickname) }
     }
 
     private fun validateDuplicationEmail(email: String) {
-        check(!memberRepository.existsByEmail(UserEmail(email))) { throw DuplicateEmailException(email) }
+        check(!memberRepository.existsByEmail(UserEmail(email))) { throw MemberException.DuplicateEmailException(email) }
     }
 
     private fun getMember(memberId: Long) =
-        memberRepository.findByIdOrNull(memberId)?: throw MemberNotFoundException(memberId)
+        memberRepository.findByIdOrNull(memberId)?: throw MemberException.MemberNotFoundException(memberId)
 }
 

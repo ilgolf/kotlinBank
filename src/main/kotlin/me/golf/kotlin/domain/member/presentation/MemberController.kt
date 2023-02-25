@@ -6,20 +6,13 @@ import me.golf.kotlin.domain.member.dto.request.MemberApiSaveRequestDto
 import me.golf.kotlin.domain.member.dto.request.MemberApiSearchRequestDto
 import me.golf.kotlin.domain.member.dto.request.MemberApiUpdateRequestDto
 import me.golf.kotlin.domain.member.dto.response.SimpleMemberResponse
-import me.golf.kotlin.domain.member.error.PhoneConfirmDeniedException
-import me.golf.kotlin.global.exception.error.ErrorCode
+import me.golf.kotlin.domain.member.error.MemberException
 import me.golf.kotlin.global.security.CustomUserDetails
 import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
-import org.springframework.web.bind.annotation.DeleteMapping
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.PutMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import javax.validation.Valid
 
 @RestController
@@ -32,7 +25,7 @@ class MemberController(
     @PostMapping("/public/members")
     fun save(@Valid @RequestBody requestDto: MemberApiSaveRequestDto): ResponseEntity<SimpleMemberResponse> {
 
-        check(requestDto.isPhoneConfirm) { throw PhoneConfirmDeniedException(requestDto.phoneNumber) }
+        check(requestDto.isPhoneConfirm) { throw MemberException.PhoneConfirmDeniedException(requestDto.phoneNumber) }
 
         return ResponseEntity.status(HttpStatus.CREATED)
             .body(SimpleMemberResponse(memberCommandService.save(requestDto.toServiceDto()), true))

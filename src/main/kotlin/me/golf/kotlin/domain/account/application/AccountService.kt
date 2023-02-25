@@ -1,6 +1,6 @@
 package me.golf.kotlin.domain.account.application
 
-import me.golf.kotlin.domain.account.error.InvalidRefreshTokenException
+import me.golf.kotlin.domain.account.error.AccountException
 import me.golf.kotlin.global.jwt.TokenProvider
 import me.golf.kotlin.global.jwt.dto.TokenBaseDto
 import me.golf.kotlin.global.security.CustomUserDetails
@@ -30,7 +30,7 @@ class AccountService(
     }
     
     fun reissue(refreshToken: String): String {
-        check(tokenProvider.validateToken(refreshToken)) { throw InvalidRefreshTokenException() }
+        check(tokenProvider.validateToken(refreshToken)) { throw AccountException.InvalidRefreshTokenException() }
 
         val authentication = tokenProvider.getAuthentication(refreshToken)
         val principal = authentication.principal as CustomUserDetails

@@ -1,9 +1,9 @@
 package me.golf.kotlin.domain.member.application
 
+import me.golf.kotlin.domain.member.dto.request.MemberSearchRequestDto
 import me.golf.kotlin.domain.member.dto.response.MemberApiDetailDto
 import me.golf.kotlin.domain.member.dto.response.MemberApiShortResponseDto
-import me.golf.kotlin.domain.member.dto.request.MemberSearchRequestDto
-import me.golf.kotlin.domain.member.error.MemberNotFoundException
+import me.golf.kotlin.domain.member.error.MemberException
 import me.golf.kotlin.domain.member.model.repository.MemberRepository
 import me.golf.kotlin.global.common.PageCustomResponse
 import org.springframework.data.domain.Pageable
@@ -19,7 +19,9 @@ class MemberQueryService(
     @Transactional(readOnly = true)
     fun getDetail(memberId: Long): MemberApiDetailDto {
 
-        val member = memberRepository.findByIdOrNull(memberId) ?: throw MemberNotFoundException(memberId)
+        val member =
+            memberRepository.findByIdOrNull(memberId) ?: throw MemberException.MemberNotFoundException(memberId)
+
         return MemberApiDetailDto.of(member)
     }
 
