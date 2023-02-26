@@ -5,33 +5,38 @@ import me.golf.kotlin.domain.bank.nh.utils.NhHeaderValueUtils
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
-data class BalanceRequestDto(
+data class GetFinAccountRequestDto(
 
     @field:JsonProperty("Header")
     val commonHeader: NhCommonHeader,
 
-    @field:JsonProperty("FinAcno")
-    val finAccount: String
+    @field:JsonProperty("Rgno")
+    val registerNumber: String,
+
+    @field:JsonProperty("BrdtBrno")
+    val birth: String
 ) {
 
     companion object {
-        fun of(finAccount: String): BalanceRequestDto {
+        fun of(registerNumber: String): GetFinAccountRequestDto {
+
             val nowDateTimeParse = LocalDateTime.now()
                 .format(DateTimeFormatter.ofPattern("yyyyMMdd hhmmss"))
                 .split(" ")
 
-            return BalanceRequestDto(
+            return GetFinAccountRequestDto(
                 NhCommonHeader(
-                    NhHeaderValueUtils.BALANCE_API_NAME_VALUE,
+                    NhHeaderValueUtils.GET_FIN_ACCOUNT_API_NAME_VALUE,
                     nowDateTimeParse[0],
                     nowDateTimeParse[1],
                     NhHeaderValueUtils.AGENCY_CODE_VALUE,
                     NhHeaderValueUtils.FINTECH_NUMBER_VALUE,
-                    NhHeaderValueUtils.BALANCE_SERVICE_CODE_VALUE,
+                    NhHeaderValueUtils.FIN_ACCOUNT_SERVICE_CODE_VALUE,
                     NhHeaderValueUtils.createAgencyDealCode().toString(),
                     NhHeaderValueUtils.ACCESS_TOKEN_VALUE
                 ),
-                finAccount
+                registerNumber,
+                "19961025"
             )
         }
     }

@@ -18,6 +18,9 @@ class BankAccount(
     @Column(name = "account_password", length = 200, nullable = false)
     var password: String,
 
+    @Column(name = "register_number", length = 120, nullable = false)
+    var registerNumber: String,
+
     @Column(name = "fin_account", length = 120, nullable = false)
     var finAccount: String,
 

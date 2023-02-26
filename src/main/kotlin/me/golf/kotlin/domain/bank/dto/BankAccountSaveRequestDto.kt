@@ -11,10 +11,11 @@ data class BankAccountSaveRequestDto(
     val memberId: Long
 ) {
 
-    fun toEntity(finAccount: String) =
+    fun toEntity(registerNumber: String, finAccount: String) =
         BankAccount(
             number = number,
             password = password,
+            registerNumber = registerNumber,
             finAccount = finAccount,
             memberId = memberId,
             bankName = bankName,

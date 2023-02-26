@@ -17,7 +17,8 @@ object TestBankAccountUtils {
         return BankAccount(
             number = number,
             password = password,
-            finAccount = "finAccount",
+            registerNumber = "23912893",
+            finAccount = "8038129893",
             memberId = memberId,
             bankName = BankName.of(bankName),
             name = name
@@ -28,7 +29,8 @@ object TestBankAccountUtils {
         return BankAccount(
             number = number,
             password = password,
-            finAccount = "finAccount",
+            registerNumber = "23912893",
+            finAccount = "8038129893",
             memberId = memberId,
             bankName = BankName.of(bankName),
             name = name
