@@ -12,7 +12,8 @@ enum class BankName(
     SIN_HAN("신한은행", "088"),
     HANA("하나은행", "081"),
     IBK("기업은행", "003"),
-    WOORI("우리은행", "");
+    WOORI("우리은행", "020"),
+    NH_MUTUAL("농협상호금융", "012");
 
     companion object {
         fun of(bankName: String): BankName {
@@ -23,6 +24,7 @@ enum class BankName(
                 HANA.value -> HANA
                 IBK.value -> IBK
                 WOORI.value -> WOORI
+                NH_MUTUAL.value -> NH_MUTUAL
                 else -> throw BankAccountException.ConvertBankNameDeniedException()
             }
         }
