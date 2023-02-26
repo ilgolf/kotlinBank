@@ -16,14 +16,14 @@ data class PublishFinAccountRequestDto(
     @field:JsonProperty("BrdtBrno")
     val birth: String,
 
-    @field:JsonProperty("BnCd")
+    @field:JsonProperty("Bncd")
     val bankCode: String,
 
     @field:JsonProperty("Acno")
     val accountNumber: String
 ) {
     companion object {
-        fun of(drtrRgyn: Boolean, brdtBrno: String, bnCd: String, acno: String): PublishFinAccountRequestDto {
+        fun of(drtrRgyn: Boolean, bnCd: String, acno: String): PublishFinAccountRequestDto {
 
             val nowDateTimeParse = LocalDateTime.now()
                 .format(DateTimeFormatter.ofPattern("yyyyMMdd hhmmss"))
@@ -31,17 +31,17 @@ data class PublishFinAccountRequestDto(
 
             return PublishFinAccountRequestDto(
                 NhCommonHeader(
-                    NhHeaderValueUtils.GET_API_NAME_VALUE,
+                    NhHeaderValueUtils.FIN_ACCOUNT_API_NAME_VALUE,
                     nowDateTimeParse[0],
                     nowDateTimeParse[1],
                     NhHeaderValueUtils.AGENCY_CODE_VALUE,
                     NhHeaderValueUtils.FINTECH_NUMBER_VALUE,
-                    NhHeaderValueUtils.SERVICE_CODE_VALUE,
+                    NhHeaderValueUtils.FIN_ACCOUNT_SERVICE_CODE_VALUE,
                     NhHeaderValueUtils.createAgencyDealCode().toString(),
                     NhHeaderValueUtils.ACCESS_TOKEN_VALUE
                 ),
                 if (drtrRgyn) "Y" else "N",
-                brdtBrno,
+                "19961025", // 농협에서 내 생일에 대해서만 API를 제공해주므로 Default 처럼 가져가는걸로
                 bnCd,
                 acno
             )

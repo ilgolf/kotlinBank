@@ -5,8 +5,11 @@ import me.golf.kotlin.domain.bank.dto.PublishFinAccountRequestDto
 
 interface BankAccountApiClient {
 
-    fun getFinAccountConnection(finAccountRequestDto: PublishFinAccountRequestDto): String
+    fun publishFinAccountConnection(finAccountRequestDto: PublishFinAccountRequestDto): String
 
     fun getBalances(finAccounts: List<String>): List<String>
+
     fun getBalance(finAccount: String): BalanceResponseDto
+
+    fun getFinAccount(registerNumber: String): String
 }

@@ -1,6 +1,7 @@
 package me.golf.kotlin.domain.bank.client
 
 import me.golf.kotlin.domain.bank.dto.BalanceResponseDto
+import me.golf.kotlin.domain.bank.dto.GetFinAccountResponseDto
 import me.golf.kotlin.domain.bank.dto.PublishFinAccountRequestDto
 import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Component
@@ -9,7 +10,7 @@ import org.springframework.stereotype.Component
 @Profile("local", "test")
 class DefaultBankAccountApiClient: BankAccountApiClient {
 
-    override fun getFinAccountConnection(finAccountRequestDto: PublishFinAccountRequestDto): String {
+    override fun publishFinAccountConnection(finAccountRequestDto: PublishFinAccountRequestDto): String {
         return "123456789"
     }
 
@@ -18,6 +19,10 @@ class DefaultBankAccountApiClient: BankAccountApiClient {
     }
 
     override fun getBalance(finAccount: String): BalanceResponseDto {
-        return BalanceResponseDto("balance")
+        return BalanceResponseDto("finAccount")
+    }
+
+    override fun getFinAccount(registerNumber: String): String {
+        return GetFinAccountResponseDto("finAccount").finAccount
     }
 }

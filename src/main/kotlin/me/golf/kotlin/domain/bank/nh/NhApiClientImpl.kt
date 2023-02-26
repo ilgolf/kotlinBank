@@ -1,9 +1,7 @@
 package me.golf.kotlin.domain.bank.nh
 
 import me.golf.kotlin.domain.bank.client.BankAccountApiClient
-import me.golf.kotlin.domain.bank.dto.BalanceRequestDto
-import me.golf.kotlin.domain.bank.dto.BalanceResponseDto
-import me.golf.kotlin.domain.bank.dto.PublishFinAccountRequestDto
+import me.golf.kotlin.domain.bank.dto.*
 import me.golf.kotlin.domain.bank.error.BankAccountException
 import me.golf.kotlin.domain.bank.nh.utils.NhUrlUtils
 import org.springframework.context.annotation.Profile
@@ -19,14 +17,15 @@ class NhApiClientImpl(
     private val webClient: WebClient
 ) : BankAccountApiClient {
 
-    override fun getFinAccountConnection(finAccountRequestDto: PublishFinAccountRequestDto): String =
+    override fun publishFinAccountConnection(finAccountRequestDto: PublishFinAccountRequestDto): String =
         publishFinAccountHeadersSpec(NhUrlUtils.FIN_ACCOUNT_URL, finAccountRequestDto)
             .retrieve()
-            .bodyToMono(String::class.java)
+            .bodyToMono(PublishFinAccountResponseDto::class.java)
             .flux()
             .toStream()
             .findFirst()
             .orElseThrow { throw BankAccountException.FinAccountNotFoundException() }
+            .registerNumber
 
     override fun getBalances(finAccounts: List<String>): MutableList<String> =
         finAccounts.stream()
@@ -39,15 +38,33 @@ class NhApiClientImpl(
             .flux()
             .toStream()
             .findFirst()
-            .orElse("????")
+            .orElse(BalanceNhResponseDto("????"))
+            .balance
 
         return BalanceResponseDto(balance)
     }
 
+    override fun getFinAccount(registerNumber: String): String {
+        return getFinAccountRequestSpec(registerNumber)
+            .flux()
+            .toStream()
+            .findFirst()
+            .orElse(GetFinAccountResponseDto("-1")) // 미 발급된 경우 재발급을 추후에 할 수 있으므로 -1로 미발급 회원 구분
+            .finAccount
+    }
+
+    private fun getFinAccountRequestSpec(registerNumber: String) = webClient
+        .post()
+        .uri(URI.create(NhUrlUtils.GET_FIN_ACCOUNT_URL))
+        .contentType(MediaType.APPLICATION_JSON)
+        .bodyValue(GetFinAccountRequestDto.of(registerNumber))
+        .retrieve()
+        .bodyToMono(GetFinAccountResponseDto::class.java)
+
     private fun getBalanceWithFinAccount(finAccount: String) =
         postRequestHeadersAndBodySpec(NhUrlUtils.FIND_BALANCE_URL, BalanceRequestDto.of(finAccount))
             .retrieve()
-            .bodyToMono(String::class.java)
+            .bodyToMono(BalanceNhResponseDto::class.java)
 
     private fun publishFinAccountHeadersSpec(
         url: String,
@@ -64,5 +81,6 @@ class NhApiClientImpl(
     ) = webClient
         .post()
         .uri(URI(url))
+        .contentType(MediaType.APPLICATION_JSON)
         .bodyValue(requestDto)
 }

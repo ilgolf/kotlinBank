@@ -35,3 +35,11 @@ cool-sms:
   api-secret: RF237SZAATQK1KCVOOHU1EW33RUNECV8
   domain: https://api.coolsms.co.kr
   phone-number: 01050626098
+
+# webclient 로깅 용
+logging:
+  level:
+    reactor:
+      netty:
+        http:
+          client: debug

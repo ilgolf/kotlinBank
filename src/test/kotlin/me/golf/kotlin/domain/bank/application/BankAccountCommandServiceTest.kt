@@ -8,9 +8,6 @@ import me.golf.kotlin.domain.bank.dto.BankAccountSaveRequestDto
 import me.golf.kotlin.domain.bank.dto.SimpleBankAccountIdResponseDto
 import me.golf.kotlin.domain.bank.error.BankAccountException
 import me.golf.kotlin.domain.bank.model.BankAccountRepository
-import me.golf.kotlin.domain.member.application.MemberQueryService
-import me.golf.kotlin.domain.member.dto.response.MemberApiDetailDto
-import me.golf.kotlin.domain.member.util.GivenMember
 import me.golf.kotlin.domain.member.util.TestPasswordEncoder
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.catchException
@@ -24,13 +21,12 @@ internal class BankAccountCommandServiceTest {
     private val bankAccountRepository = mockk<BankAccountRepository>()
     private val bankAccountApiClient = mockk<BankAccountApiClient>()
     private val passwordEncoder: TestPasswordEncoder = TestPasswordEncoder.init()
-    private val memberQueryService = mockk<MemberQueryService>()
     private val bankAccountLockService = mockk<BankAccountLockService>(relaxed = true)
 
     @BeforeEach
     fun init() {
         bankAccountCommandService = BankAccountCommandService(bankAccountRepository, passwordEncoder,
-            bankAccountApiClient, memberQueryService, bankAccountLockService)
+            bankAccountApiClient, bankAccountLockService)
     }
 
     @Test
@@ -44,9 +40,9 @@ internal class BankAccountCommandServiceTest {
 
         every { bankAccountRepository.existsByName(any()) } returns false
         every { bankAccountRepository.existsByNumber(any()) } returns false
-        every { bankAccountApiClient.getFinAccountConnection(any()) } returns finTechAccount
+        every { bankAccountApiClient.publishFinAccountConnection(any()) } returns finTechAccount
         every { bankAccountRepository.save(any()) } returns bankAccount
-        every { memberQueryService.getDetail(any()) } returns MemberApiDetailDto.of(GivenMember.toMember())
+        every { bankAccountApiClient.getFinAccount(any()) } returns "finAccount"
         every { bankAccountLockService.tryLock(any()) } returns true
 
         // when
@@ -63,12 +59,10 @@ internal class BankAccountCommandServiceTest {
         val requestDto = BankAccountSaveRequestDto.testInitializer(TestBankAccountUtils.mockBankAccount(), TestBankAccountUtils.memberId)
         val bankAccount = TestBankAccountUtils.mockBankAccount()
         bankAccount.id = 1L
-        val member = MemberApiDetailDto.of(GivenMember.toMember())
 
         every { bankAccountRepository.existsByNumber(any()) } returns false
         every { bankAccountRepository.existsByName(any()) } returns false
-        every { memberQueryService.getDetail(any()) } returns member
-        every { bankAccountApiClient.getFinAccountConnection(any()) } throws BankAccountException.FinAccountNotFoundException()
+        every { bankAccountApiClient.publishFinAccountConnection(any()) } throws BankAccountException.FinAccountNotFoundException()
         every { bankAccountLockService.tryLock(any()) } returns true
 
         // when
