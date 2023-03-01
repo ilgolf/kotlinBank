@@ -9,7 +9,7 @@ class BankAccountCustomRepositoryImpl(
     private val query: JPAQueryFactory
 ) : BankAccountCustomRepository {
 
-    override fun findAllByMemberId(memberId: Long): List<BankAccountSummaryWithFinAccount> {
+    override fun findSummaryByMemberId(memberId: Long): List<BankAccountSummaryWithFinAccount> {
         return query.select(
             QBankAccountSummaryWithFinAccount(
                 bankAccount.id,

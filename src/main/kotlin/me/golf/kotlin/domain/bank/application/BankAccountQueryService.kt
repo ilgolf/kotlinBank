@@ -6,11 +6,8 @@ import me.golf.kotlin.domain.bank.dto.BankAccountDetailResponseDto
 import me.golf.kotlin.domain.bank.dto.BankAccountSummaryResponseDto
 import me.golf.kotlin.domain.bank.dto.BankAccountSummaryWithFinAccount
 import me.golf.kotlin.domain.bank.error.BankAccountException
-import me.golf.kotlin.domain.bank.history.application.TransferHistoryService
 import me.golf.kotlin.domain.bank.model.BankAccountRedisRepository
 import me.golf.kotlin.domain.bank.model.BankAccountRepository
-import me.golf.kotlin.domain.bank.nh.utils.NhHeaderValueUtils
-import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.util.stream.Collectors
@@ -38,7 +35,9 @@ class BankAccountQueryService(
 
     fun getBankAccountsByMemberId(memberId: Long): List<BankAccountSummaryResponseDto> {
         val summaryWithFinAccounts = getBankAccountSummaryWithFinAccounts(memberId)
-        val finAccounts = summaryWithFinAccounts.stream().map { dto -> dto.finAccount }.collect(Collectors.toList())
+        val finAccounts = summaryWithFinAccounts.stream()
+            .map { dto -> dto.finAccount }
+            .collect(Collectors.toList())
 
         val balancesByFinAccount = bankAccountRedisRepository.findBalancesByFinAccount(finAccounts)
 
@@ -53,9 +52,11 @@ class BankAccountQueryService(
         return bankAccountApiClient.getBalances(finAccounts)
     }
 
-    private fun getBankAccountSummaryWithFinAccounts(memberId: Long) = bankAccountRepository.findAllByMemberId(memberId)
+    private fun getBankAccountSummaryWithFinAccounts(memberId: Long) = bankAccountRepository.findSummaryByMemberId(memberId)
 
-    private fun getBankAccount(
+    fun getBankAccountsBy(memberId: Long) = bankAccountRepository.findAllByMemberId(memberId)
+
+    fun getBankAccount(
         bankAccountId: Long,
         memberId: Long
     ) =

@@ -2,7 +2,7 @@ package me.golf.kotlin.domain.bank.application
 
 import me.golf.kotlin.domain.bank.client.BankAccountApiClient
 import me.golf.kotlin.domain.bank.dto.BankAccountSaveRequestDto
-import me.golf.kotlin.domain.bank.dto.PublishFinAccountRequestDto
+import me.golf.kotlin.domain.bank.dto.PublishRegisterNumberRequestDto
 import me.golf.kotlin.domain.bank.dto.SimpleBankAccountIdResponseDto
 import me.golf.kotlin.domain.bank.error.BankAccountException
 import me.golf.kotlin.domain.bank.model.BankAccountRepository
@@ -30,10 +30,7 @@ class BankAccountCommandService(
             this.validationDuplicationByName(requestDto.name)
 
             // 우선 무조건 입출금 가능 이 후 변경 ?
-            val finAccountRequestDto = PublishFinAccountRequestDto
-                .of(true, requestDto.bankName.code, requestDto.number)
-
-            val registerNumber = publishFinAccount(finAccountRequestDto)
+            val registerNumber = getRegisterNumber(requestDto)
             val finAccount = bankAccountApiClient.getFinAccount(registerNumber)
 
             val bankAccount = requestDto
@@ -60,8 +57,13 @@ class BankAccountCommandService(
         bankAccount.delete()
     }
 
-    private fun publishFinAccount(finAccountRequestDto: PublishFinAccountRequestDto) =
-        bankAccountApiClient.publishFinAccountConnection(finAccountRequestDto)
+    fun getRegisterNumber(requestDto: BankAccountSaveRequestDto): String {
+        val finAccountRequestDto = PublishRegisterNumberRequestDto
+            .of(true, requestDto.bankName.code, requestDto.number)
+
+        return bankAccountApiClient.publishRegisterNumberConnection(finAccountRequestDto)
+    }
+
 
     private fun validationDuplicationByName(name: String) {
         check(!bankAccountRepository.existsByName(name)) { throw BankAccountException.NameDuplicationException(name) }

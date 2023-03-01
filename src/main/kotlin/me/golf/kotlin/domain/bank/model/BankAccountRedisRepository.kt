@@ -14,8 +14,12 @@ class BankAccountRedisRepository(
 
         val balanceToFinAccountMap = mutableMapOf<String, String>()
 
-        if (balances.isEmpty()) {
-            return emptyMap()
+        if (balances.filterNotNull().isEmpty()) {
+            for (i in finAccounts.indices) {
+                balanceToFinAccountMap[finAccounts[i]] = "????"
+            }
+
+            return balanceToFinAccountMap
         }
 
         for (i in finAccounts.indices) {

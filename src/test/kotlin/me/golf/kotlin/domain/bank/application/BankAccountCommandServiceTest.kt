@@ -40,7 +40,7 @@ internal class BankAccountCommandServiceTest {
 
         every { bankAccountRepository.existsByName(any()) } returns false
         every { bankAccountRepository.existsByNumber(any()) } returns false
-        every { bankAccountApiClient.publishFinAccountConnection(any()) } returns finTechAccount
+        every { bankAccountApiClient.publishRegisterNumberConnection(any()) } returns finTechAccount
         every { bankAccountRepository.save(any()) } returns bankAccount
         every { bankAccountApiClient.getFinAccount(any()) } returns "finAccount"
         every { bankAccountLockService.tryLock(any()) } returns true
@@ -62,7 +62,7 @@ internal class BankAccountCommandServiceTest {
 
         every { bankAccountRepository.existsByNumber(any()) } returns false
         every { bankAccountRepository.existsByName(any()) } returns false
-        every { bankAccountApiClient.publishFinAccountConnection(any()) } throws BankAccountException.FinAccountNotFoundException()
+        every { bankAccountApiClient.publishRegisterNumberConnection(any()) } throws BankAccountException.FinAccountNotFoundException()
         every { bankAccountLockService.tryLock(any()) } returns true
 
         // when

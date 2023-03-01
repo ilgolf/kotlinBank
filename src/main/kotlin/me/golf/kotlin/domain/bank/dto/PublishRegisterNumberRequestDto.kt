@@ -5,7 +5,7 @@ import me.golf.kotlin.domain.bank.nh.utils.NhHeaderValueUtils
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
-data class PublishFinAccountRequestDto(
+data class PublishRegisterNumberRequestDto(
 
     @field:JsonProperty("Header")
     val commonHeader: NhCommonHeader,
@@ -23,13 +23,13 @@ data class PublishFinAccountRequestDto(
     val accountNumber: String
 ) {
     companion object {
-        fun of(drtrRgyn: Boolean, bnCd: String, acno: String): PublishFinAccountRequestDto {
+        fun of(drtrRgyn: Boolean, bnCd: String, acno: String): PublishRegisterNumberRequestDto {
 
             val nowDateTimeParse = LocalDateTime.now()
                 .format(DateTimeFormatter.ofPattern("yyyyMMdd hhmmss"))
                 .split(" ")
 
-            return PublishFinAccountRequestDto(
+            return PublishRegisterNumberRequestDto(
                 NhCommonHeader(
                     NhHeaderValueUtils.FIN_ACCOUNT_API_NAME_VALUE,
                     nowDateTimeParse[0],

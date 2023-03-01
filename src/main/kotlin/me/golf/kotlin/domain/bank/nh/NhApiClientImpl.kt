@@ -2,7 +2,6 @@ package me.golf.kotlin.domain.bank.nh
 
 import me.golf.kotlin.domain.bank.client.BankAccountApiClient
 import me.golf.kotlin.domain.bank.dto.*
-import me.golf.kotlin.domain.bank.error.BankAccountException
 import me.golf.kotlin.domain.bank.nh.utils.NhUrlUtils
 import org.springframework.context.annotation.Profile
 import org.springframework.http.MediaType
@@ -17,14 +16,14 @@ class NhApiClientImpl(
     private val webClient: WebClient
 ) : BankAccountApiClient {
 
-    override fun publishFinAccountConnection(finAccountRequestDto: PublishFinAccountRequestDto): String =
-        publishFinAccountHeadersSpec(NhUrlUtils.FIN_ACCOUNT_URL, finAccountRequestDto)
+    override fun publishRegisterNumberConnection(publishRegisterNumberRequestDto: PublishRegisterNumberRequestDto): String =
+        publishFinAccountHeadersSpec(NhUrlUtils.FIN_ACCOUNT_URL, publishRegisterNumberRequestDto)
             .retrieve()
             .bodyToMono(PublishFinAccountResponseDto::class.java)
             .flux()
             .toStream()
             .findFirst()
-            .orElseThrow { throw BankAccountException.FinAccountNotFoundException() }
+            .orElse(PublishFinAccountResponseDto("-1"))
             .registerNumber
 
     override fun getBalances(finAccounts: List<String>): MutableList<String> =
@@ -68,7 +67,7 @@ class NhApiClientImpl(
 
     private fun publishFinAccountHeadersSpec(
         url: String,
-        finAccountRequestDto: PublishFinAccountRequestDto
+        finAccountRequestDto: PublishRegisterNumberRequestDto
     ) = webClient
         .post()
         .uri(URI.create(url))
