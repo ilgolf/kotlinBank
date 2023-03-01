@@ -4,5 +4,5 @@ import me.golf.kotlin.domain.bank.dto.BankAccountSummaryWithFinAccount
 
 interface BankAccountCustomRepository {
 
-    fun findAllByMemberId(memberId: Long): List<BankAccountSummaryWithFinAccount>
+    fun findSummaryByMemberId(memberId: Long): List<BankAccountSummaryWithFinAccount>
 }

@@ -46,7 +46,7 @@ internal class BankAccountQueryServiceTest {
 
         val finAccountToBalanceMap = mapOf("1111" to "45600", "2222" to "67900")
 
-        every { bankAccountRepository.findAllByMemberId(any()) } returns dtos
+        every { bankAccountRepository.findSummaryByMemberId(any()) } returns dtos
         every { bankAccountRedisRepository.findBalancesByFinAccount(any()) } returns finAccountToBalanceMap
 
         // when
@@ -70,7 +70,7 @@ internal class BankAccountQueryServiceTest {
             BankAccountSummaryWithFinAccount(2L, BankName.SIN_HAN, "2222")
         )
 
-        every { bankAccountRepository.findAllByMemberId(any()) } returns dtos
+        every { bankAccountRepository.findSummaryByMemberId(any()) } returns dtos
         every { bankAccountApiClient.getBalances(any()) } returns balances
 
         // when

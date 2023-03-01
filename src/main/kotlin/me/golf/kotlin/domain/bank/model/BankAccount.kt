@@ -3,12 +3,14 @@ package me.golf.kotlin.domain.bank.model
 import lombok.AccessLevel
 import lombok.NoArgsConstructor
 import me.golf.kotlin.domain.member.model.Member
+import org.hibernate.annotations.DynamicUpdate
 import org.hibernate.annotations.Where
 import org.springframework.security.crypto.password.PasswordEncoder
 import javax.persistence.*
 
 @Where(clause = "deleted = false")
 @Entity
+@DynamicUpdate
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "Account")
 class BankAccount(
@@ -78,5 +80,10 @@ class BankAccount(
 
     override fun hashCode(): Int {
         return id.hashCode()
+    }
+
+    fun updateFinAccountAndRegisterNumber(finAccount: String, registerNumber: String) {
+        this.finAccount = finAccount
+        this.registerNumber = registerNumber
     }
 }

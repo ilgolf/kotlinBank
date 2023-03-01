@@ -1,11 +1,11 @@
 package me.golf.kotlin.domain.bank.client
 
 import me.golf.kotlin.domain.bank.dto.BalanceResponseDto
-import me.golf.kotlin.domain.bank.dto.PublishFinAccountRequestDto
+import me.golf.kotlin.domain.bank.dto.PublishRegisterNumberRequestDto
 
 interface BankAccountApiClient {
 
-    fun publishFinAccountConnection(finAccountRequestDto: PublishFinAccountRequestDto): String
+    fun publishRegisterNumberConnection(publishRegisterNumberRequestDto: PublishRegisterNumberRequestDto): String
 
     fun getBalances(finAccounts: List<String>): List<String>
 

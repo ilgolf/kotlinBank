@@ -11,4 +11,6 @@ interface BankAccountRepository: JpaRepository<BankAccount, Long>, BankAccountCu
     fun existsByNumber(number: String): Boolean
 
     fun countByNumberAndName(number: String, name: String): Int
+
+    fun findAllByMemberId(memberId: Long): List<BankAccount>
 }

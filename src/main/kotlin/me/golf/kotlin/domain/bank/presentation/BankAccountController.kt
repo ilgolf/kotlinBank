@@ -1,5 +1,7 @@
 package me.golf.kotlin.domain.bank.presentation
 
+import me.golf.kotlin.domain.bank.LookupType
+import me.golf.kotlin.domain.bank.RequireFinAccount
 import me.golf.kotlin.domain.bank.application.BankAccountCommandService
 import me.golf.kotlin.domain.bank.application.BankAccountQueryService
 import me.golf.kotlin.domain.bank.dto.BankAccountInfoResponseDto
@@ -52,6 +54,7 @@ class BankAccountController(
         ResponseEntity.ok(bankAccountQueryService.getBankAccountsByMemberId(customUserDetails.memberId))
 
     @PatchMapping("/balance/{bankAccountId}")
+    @RequireFinAccount(type = LookupType.ONE)
     fun updateBalance(@AuthenticationPrincipal customUserDetails: CustomUserDetails,
                       @PathVariable bankAccountId: Long) =
 
