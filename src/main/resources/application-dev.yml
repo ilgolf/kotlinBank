@@ -1,0 +1,45 @@
+server:
+  port: 8091
+
+spring:
+  config:
+    activate:
+      on-profile: dev
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://mysql-bank:3306/bank
+    username: nokt
+    password: 1234
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        format_sql: true
+    show-sql: true
+    open-in-view: false
+
+  redis:
+    host: redis
+    port: 6379
+
+jwt:
+  secret: ${SECRET_KEY}
+  accessToken-validity-in-seconds: 7200 # 1??
+  refreshToken-validity-in-seconds: 18000 # 5??
+
+cool-sms:
+  api-key: NCSMKAJHX6H1MSBX
+  api-secret: RF237SZAATQK1KCVOOHU1EW33RUNECV8
+  domain: https://api.coolsms.co.kr
+  phone-number: 01050626098
+
+# webclient 로깅 용
+logging:
+  level:
+    reactor:
+      netty:
+        http:
+          client: debug

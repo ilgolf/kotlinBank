@@ -1,0 +1,49 @@
+server:
+  port: 8090
+
+spring:
+  config:
+    activate:
+      on-profile: test
+
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem://localhost/~/
+    username: sa
+    password:
+
+  h2:
+    console:
+      enabled: true
+
+  redis:
+    host: localhost
+    port: 6379
+
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        format_sql: true
+    show-sql: true
+
+
+jwt:
+  secret: c2lsdmVybmluZS10ZWNoLXNwcmluZy1ib290LWp3dC10dXRvcmlhbC1zZWNyZXQtc2lsdmVybmluZS10ZWNoLXNwcmluZy1ib290LWp3dC10dXRvcmlhbC1zZWNyZXQK
+  accessToken-validity-in-seconds: 3600 # 1??
+  refreshToken-validity-in-seconds: 18000 # 5??
+
+cool-sms:
+  api-key: NCSMKAJHX6H1MSBX
+  api-secret: RF237SZAATQK1KCVOOHU1EW33RUNECV8
+  domain: https://api.coolsms.co.kr
+  phone-number: 01050626098
+
+# webclient 로깅 용
+logging:
+  level:
+    reactor:
+      netty:
+        http:
+          client: debug
