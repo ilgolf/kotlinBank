@@ -26,8 +26,8 @@ class WebClientConfig {
 
         return HttpClient.create(provider)
             .wiretap("reactor.netty.http.client.HttpClient", LogLevel.DEBUG, AdvancedByteBufFormat.TEXTUAL)
-            .responseTimeout(Duration.ofSeconds(3))
-            .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 4000)
+            .responseTimeout(Duration.ofSeconds(5))
+            .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 10000)
     }
 
     @Bean

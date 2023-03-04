@@ -5,6 +5,7 @@ import me.golf.kotlin.domain.bank.application.BankAccountQueryService
 import me.golf.kotlin.domain.bank.client.BankAccountApiClient
 import me.golf.kotlin.domain.bank.dto.PublishRegisterNumberRequestDto
 import me.golf.kotlin.domain.bank.model.BankAccount
+import me.golf.kotlin.domain.bank.policy.DefaultValuePolicy.DEFAULT_BALANCE
 import me.golf.kotlin.global.security.CustomUserDetails
 import org.aspectj.lang.ProceedingJoinPoint
 import org.aspectj.lang.annotation.Around
@@ -37,14 +38,14 @@ class FinAccountAspect(
                 val bankAccount = bankAccountQueryService.getBankAccount(bankId, memberId)
                 var registerNumber = bankAccount.registerNumber
 
-                if (registerNumber == "-1") {
+                if (registerNumber == DEFAULT_BALANCE) {
                     val requestDto =
                         PublishRegisterNumberRequestDto.of(true, bankAccount.bankName.code, bankAccount.number)
 
                     registerNumber = bankAccountApiClient.publishRegisterNumberConnection(requestDto)
                 }
 
-                if (bankAccount.finAccount == "-1") {
+                if (bankAccount.finAccount == DEFAULT_BALANCE) {
                     val finAccount = bankAccountApiClient.getFinAccount(registerNumber)
                     bankAccount.updateFinAccountAndRegisterNumber(finAccount, registerNumber)
                 }
@@ -56,14 +57,14 @@ class FinAccountAspect(
                 val memberId = (args[0] as CustomUserDetails).memberId
 
                 val bankAccounts = bankAccountQueryService.getBankAccountsBy(memberId)
-                    .filter { it.registerNumber == "-1" }
+                    .filter { it.registerNumber == DEFAULT_BALANCE }
 
                 bankAccounts
-                    .filter { it.registerNumber == "-1" }
+                    .filter { it.registerNumber == DEFAULT_BALANCE }
                     .forEach { it.updateFinAccountAndRegisterNumber(it.finAccount, getRegisterNumber(it)) }
 
                 bankAccounts
-                    .filter { it.registerNumber == "-1" }
+                    .filter { it.registerNumber == DEFAULT_BALANCE }
                     .forEach {
                         it.updateFinAccountAndRegisterNumber(
                             bankAccountApiClient.getFinAccount(it.registerNumber),

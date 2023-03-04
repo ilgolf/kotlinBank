@@ -1,6 +1,7 @@
 package me.golf.kotlin.domain.bank.dto
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import me.golf.kotlin.domain.bank.nh.dto.NhCommonRequestHeader
 import me.golf.kotlin.domain.bank.nh.utils.NhHeaderValueUtils
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -8,7 +9,7 @@ import java.time.format.DateTimeFormatter
 data class PublishRegisterNumberRequestDto(
 
     @field:JsonProperty("Header")
-    val commonHeader: NhCommonHeader,
+    val commonHeader: NhCommonRequestHeader,
 
     @field:JsonProperty("DrtrRgyn")
     val withdrawalTransferYn: String,
@@ -30,7 +31,7 @@ data class PublishRegisterNumberRequestDto(
                 .split(" ")
 
             return PublishRegisterNumberRequestDto(
-                NhCommonHeader(
+                NhCommonRequestHeader(
                     NhHeaderValueUtils.FIN_ACCOUNT_API_NAME_VALUE,
                     nowDateTimeParse[0],
                     nowDateTimeParse[1],
