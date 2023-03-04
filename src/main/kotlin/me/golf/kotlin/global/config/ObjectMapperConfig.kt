@@ -3,6 +3,7 @@ package me.golf.kotlin.global.config
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
+import com.fasterxml.jackson.module.kotlin.KotlinFeature
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -20,5 +21,7 @@ class ObjectMapperConfig {
     }
 
     @Bean
-    fun kotlinModule() = KotlinModule.Builder().build()
+    fun kotlinModule() = KotlinModule.Builder()
+        .enable((KotlinFeature.NullIsSameAsDefault))
+        .build()
 }
