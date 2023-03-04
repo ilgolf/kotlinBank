@@ -5,17 +5,17 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import me.golf.kotlin.domain.bank.nh.dto.NhCommonResponseHeader
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-data class BalanceNhResponseDto (
+data class PublishRegisterNumberResponseDto(
 
     @field:JsonProperty("Header")
     val commonHeader: NhCommonResponseHeader,
 
-    @field:JsonProperty("RlpmAbamt")
-    val balance: String
+    @field:JsonProperty("Rgno")
+    val registerNumber: String
 ) {
 
     companion object {
-        fun createDefault(balance: String) = BalanceNhResponseDto(NhCommonResponseHeader(), balance)
+        fun createDefault(registerNumber: String) =
+            PublishRegisterNumberResponseDto(NhCommonResponseHeader(), registerNumber)
     }
 }
-

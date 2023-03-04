@@ -23,6 +23,6 @@ class DefaultBankAccountApiClient: BankAccountApiClient {
     }
 
     override fun getFinAccount(registerNumber: String): String {
-        return GetFinAccountResponseDto("finAccount").finAccount
+        return GetFinAccountResponseDto.createDefault("finAccount").finAccount
     }
 }

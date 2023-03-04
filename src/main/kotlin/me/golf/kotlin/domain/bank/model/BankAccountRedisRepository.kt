@@ -1,5 +1,6 @@
 package me.golf.kotlin.domain.bank.model
 
+import me.golf.kotlin.domain.bank.policy.DefaultValuePolicy.DEFAULT_REGISTER_NUMBER
 import me.golf.kotlin.global.common.RedisPolicy
 import org.springframework.data.redis.core.StringRedisTemplate
 import org.springframework.stereotype.Repository
@@ -16,7 +17,7 @@ class BankAccountRedisRepository(
 
         if (balances.filterNotNull().isEmpty()) {
             for (i in finAccounts.indices) {
-                balanceToFinAccountMap[finAccounts[i]] = "????"
+                balanceToFinAccountMap[finAccounts[i]] = DEFAULT_REGISTER_NUMBER
             }
 
             return balanceToFinAccountMap

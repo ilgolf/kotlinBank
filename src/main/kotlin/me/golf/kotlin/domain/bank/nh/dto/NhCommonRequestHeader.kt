@@ -1,8 +1,8 @@
-package me.golf.kotlin.domain.bank.dto
+package me.golf.kotlin.domain.bank.nh.dto
 
 import com.fasterxml.jackson.annotation.JsonProperty
 
-data class NhCommonHeader(
+data class NhCommonRequestHeader(
 
 
     @field:JsonProperty("ApiNm")
