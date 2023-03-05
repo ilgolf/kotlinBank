@@ -4,14 +4,20 @@ drop table if exists member CASCADE;
 
 create table account
 (
-    account_id       bigint auto_increment not null,
-    bank_name        varchar(10)           not null,
-    deleted          boolean               not null,
-    fin_account      varchar(120)          not null,
-    member_id        bigint,
-    account_name     varchar(255),
-    number           varchar(30)           not null,
-    account_password varchar(200)          not null,
+    account_id         bigint auto_increment not null,
+    bank_name          varchar(10)           not null,
+    deleted            boolean               not null,
+    fin_account        varchar(120)          not null,
+    register_number    varchar(120)          not null,
+    member_id          bigint,
+    account_name       varchar(255),
+    number             varchar(30)           not null,
+    account_password   varchar(200)          not null,
+    created_at         datetime,
+    last_modified_date datetime,
+    created_by         bigint,
+    last_modified_by   bigint,
+
     primary key (account_id)
 );
 
