@@ -4,7 +4,7 @@ import me.golf.kotlin.domain.bank.client.BankAccountApiClient
 import me.golf.kotlin.domain.bank.dto.*
 import me.golf.kotlin.domain.bank.nh.utils.NhUrlUtils
 import me.golf.kotlin.domain.bank.policy.DefaultValuePolicy.DEFAULT_BALANCE
-import me.golf.kotlin.domain.bank.policy.DefaultValuePolicy.DEFAULT_REGISTER_NUMBER
+import me.golf.kotlin.domain.bank.policy.DefaultValuePolicy.DEFAULT_NH_VALUE
 import org.slf4j.LoggerFactory
 import org.springframework.context.annotation.Profile
 import org.springframework.http.MediaType
@@ -15,7 +15,7 @@ import java.net.URI
 import java.util.stream.Collectors
 
 @Component
-@Profile("dev", "prd")
+@Profile("dev", "prd", "local")
 class NhApiClientImpl(
     private val webClient: WebClient
 ) : BankAccountApiClient {
@@ -27,7 +27,7 @@ class NhApiClientImpl(
             .flux()
             .toStream()
             .findFirst()
-            .orElse(PublishRegisterNumberResponseDto.createDefault(DEFAULT_REGISTER_NUMBER))
+            .orElse(PublishRegisterNumberResponseDto.createDefault(DEFAULT_NH_VALUE))
             .registerNumber
 
     override fun getBalances(finAccounts: List<String>): MutableList<String> =
@@ -52,7 +52,7 @@ class NhApiClientImpl(
             .flux()
             .toStream()
             .findFirst()
-            .orElse(GetFinAccountResponseDto.createDefault(DEFAULT_REGISTER_NUMBER))
+            .orElse(GetFinAccountResponseDto.createDefault(DEFAULT_NH_VALUE))
             .finAccount
     }
 

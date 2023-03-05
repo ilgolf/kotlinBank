@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Component
 
 @Component
-@Profile("local", "test")
+@Profile("test")
 class DefaultBankAccountApiClient: BankAccountApiClient {
 
     override fun publishRegisterNumberConnection(publishRegisterNumberRequestDto: PublishRegisterNumberRequestDto): String {

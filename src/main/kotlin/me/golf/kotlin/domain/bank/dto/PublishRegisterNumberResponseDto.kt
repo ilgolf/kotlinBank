@@ -3,6 +3,7 @@ package me.golf.kotlin.domain.bank.dto
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
 import me.golf.kotlin.domain.bank.nh.dto.NhCommonResponseHeader
+import me.golf.kotlin.domain.bank.policy.DefaultValuePolicy.DEFAULT_NH_VALUE
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class PublishRegisterNumberResponseDto(
@@ -11,7 +12,7 @@ data class PublishRegisterNumberResponseDto(
     val commonHeader: NhCommonResponseHeader,
 
     @field:JsonProperty("Rgno")
-    val registerNumber: String
+    val registerNumber: String = DEFAULT_NH_VALUE
 ) {
 
     companion object {
