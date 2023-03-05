@@ -1,18 +1,13 @@
 package me.golf.kotlin.domain.member.model
 
 import me.golf.kotlin.global.common.BaseTimeEntity
+import org.hibernate.annotations.Where
 import org.springframework.security.crypto.password.PasswordEncoder
 import java.time.LocalDate
 import javax.persistence.*
 
+@Where(clause = "deleted = false")
 @Entity
-@Table(
-    name = "member",
-    indexes = [
-        Index(name = "i_email", columnList = "email"),
-        Index(name = "i_nickname", columnList = "nickname")
-    ]
-)
 class Member (
     @Embedded
     var email: UserEmail,
