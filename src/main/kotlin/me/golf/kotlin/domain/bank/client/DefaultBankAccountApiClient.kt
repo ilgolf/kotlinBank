@@ -1,8 +1,8 @@
 package me.golf.kotlin.domain.bank.client
 
 import me.golf.kotlin.domain.bank.dto.BalanceResponseDto
-import me.golf.kotlin.domain.bank.dto.GetFinAccountResponseDto
-import me.golf.kotlin.domain.bank.dto.PublishRegisterNumberRequestDto
+import me.golf.kotlin.domain.bank.nh.dto.GetFinAccountResponseDto
+import me.golf.kotlin.domain.bank.nh.dto.PublishRegisterNumberRequestDto
 import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Component
 

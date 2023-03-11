@@ -1,7 +1,6 @@
-package me.golf.kotlin.domain.bank.dto
+package me.golf.kotlin.domain.bank.nh.dto
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import me.golf.kotlin.domain.bank.nh.dto.NhCommonRequestHeader
 import me.golf.kotlin.domain.bank.nh.utils.NhHeaderValueUtils
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter

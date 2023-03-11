@@ -8,7 +8,7 @@ import me.golf.kotlin.domain.bank.dto.BankAccountSummaryWithFinAccount
 import me.golf.kotlin.domain.bank.error.BankAccountException
 import me.golf.kotlin.domain.bank.model.BankAccountRedisRepository
 import me.golf.kotlin.domain.bank.model.BankAccountRepository
-import me.golf.kotlin.domain.bank.policy.DefaultValuePolicy.DEFAULT_NH_VALUE
+import me.golf.kotlin.domain.bank.policy.DefaultValuePolicy.DEFAULT_BALANCE
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.util.stream.Collectors
@@ -24,7 +24,7 @@ class BankAccountQueryService(
     fun getBankAccountSummary(bankAccountId: Long, memberId: Long): BankAccountDetailResponseDto {
         val bankAccount = getBankAccount(bankAccountId, memberId)
         val balance =
-            bankAccountRedisRepository.findBalanceByFinAccount(bankAccount.finAccount) ?: DEFAULT_NH_VALUE
+            bankAccountRedisRepository.findBalanceByFinAccount(bankAccount.finAccount) ?: DEFAULT_BALANCE
 
         return BankAccountDetailResponseDto(bankAccount, balance)
     }

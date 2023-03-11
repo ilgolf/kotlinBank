@@ -7,6 +7,7 @@ import me.golf.kotlin.domain.bank.client.BankAccountApiClient
 import me.golf.kotlin.domain.bank.dto.BankAccountSaveRequestDto
 import me.golf.kotlin.domain.bank.dto.SimpleBankAccountIdResponseDto
 import me.golf.kotlin.domain.bank.error.BankAccountException
+import me.golf.kotlin.domain.bank.model.BankAccount
 import me.golf.kotlin.domain.bank.model.BankAccountRepository
 import me.golf.kotlin.domain.member.util.TestPasswordEncoder
 import org.assertj.core.api.Assertions.assertThat
@@ -38,18 +39,58 @@ internal class BankAccountCommandServiceTest {
         val bankAccount = TestBankAccountUtils.mockBankAccount()
         bankAccount.id = 1L
 
+        every { bankAccountLockService.tryLock(any()) } returns true
         every { bankAccountRepository.existsByName(any()) } returns false
         every { bankAccountRepository.existsByNumber(any()) } returns false
         every { bankAccountApiClient.publishRegisterNumberConnection(any()) } returns finTechAccount
         every { bankAccountRepository.save(any()) } returns bankAccount
         every { bankAccountApiClient.getFinAccount(any()) } returns "finAccount"
-        every { bankAccountLockService.tryLock(any()) } returns true
 
         // when
         val responseDto: SimpleBankAccountIdResponseDto = bankAccountCommandService.save(requestDto)
 
         // then
         assertThat(responseDto.bankAccountId).isEqualTo(1L)
+    }
+
+    @Test
+    @DisplayName("계좌번호가 중복되면 Exception이 발생한다.")
+    fun saveFailByDuplicateNumber() {
+        // given
+        val requestDto = BankAccountSaveRequestDto.testInitializer(
+            TestBankAccountUtils.mockBankAccount(),
+            TestBankAccountUtils.memberId
+        )
+
+        every { bankAccountLockService.tryLock(any()) } returns true
+        every { bankAccountRepository.existsByName(any()) } returns false
+        every { bankAccountRepository.existsByNumber(any()) } returns true
+
+        // when
+        val exception = catchException { bankAccountCommandService.save(requestDto) }
+
+        // then
+        assertThat(exception).isInstanceOf(BankAccountException.NumberDuplicationException::class.java)
+    }
+
+    @Test
+    @DisplayName("은행 별칭은 중복될 수 없다.")
+    fun saveFailByDuplicationName() {
+        // given
+        val requestDto = BankAccountSaveRequestDto.testInitializer(
+            TestBankAccountUtils.mockBankAccount(),
+            TestBankAccountUtils.memberId
+        )
+
+        every { bankAccountLockService.tryLock(any()) } returns true
+        every { bankAccountRepository.existsByName(any()) } returns true
+        every { bankAccountRepository.existsByNumber(any()) } returns false
+
+        // when
+        val exception = catchException { bankAccountCommandService.save(requestDto) }
+
+        // then
+        assertThat(exception).isInstanceOf(BankAccountException.NameDuplicationException::class.java)
     }
 
     @Test

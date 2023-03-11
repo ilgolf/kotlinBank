@@ -1,7 +1,7 @@
 package me.golf.kotlin.domain.bank.client
 
 import me.golf.kotlin.domain.bank.dto.BalanceResponseDto
-import me.golf.kotlin.domain.bank.dto.PublishRegisterNumberRequestDto
+import me.golf.kotlin.domain.bank.nh.dto.PublishRegisterNumberRequestDto
 
 interface BankAccountApiClient {
 
