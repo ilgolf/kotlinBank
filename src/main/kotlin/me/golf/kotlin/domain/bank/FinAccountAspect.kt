@@ -2,7 +2,7 @@ package me.golf.kotlin.domain.bank
 
 import me.golf.kotlin.domain.bank.application.BankAccountQueryService
 import me.golf.kotlin.domain.bank.client.BankAccountApiClient
-import me.golf.kotlin.domain.bank.dto.PublishRegisterNumberRequestDto
+import me.golf.kotlin.domain.bank.nh.dto.PublishRegisterNumberRequestDto
 import me.golf.kotlin.domain.bank.model.BankAccount
 import me.golf.kotlin.domain.bank.model.BankAccountRepository
 import me.golf.kotlin.domain.bank.policy.DefaultValuePolicy.DEFAULT_NH_VALUE

@@ -7,7 +7,6 @@ import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Component
 import java.util.*
 
-
 @Component
 class SpringSecurityAuditorAware: AuditorAware<Long> {
 
@@ -17,9 +16,9 @@ class SpringSecurityAuditorAware: AuditorAware<Long> {
 
     override fun getCurrentAuditor(): Optional<Long> {
         val authentication = SecurityContextHolder.getContext().authentication
+            ?: return Optional.empty()
 
-        val isUser = authentication.authorities.stream()
-            .anyMatch { auth -> auth.equals(SimpleGrantedAuthority(USER_AUTHORITY)) }
+        val isUser = authentication.authorities.contains(SimpleGrantedAuthority(USER_AUTHORITY))
 
         if (isUser) {
             val principal = authentication.principal as CustomUserDetails

@@ -6,6 +6,7 @@ import me.golf.kotlin.domain.bank.TestBankAccountUtils
 import me.golf.kotlin.domain.bank.application.BankAccountCommandService
 import me.golf.kotlin.domain.bank.application.BankAccountQueryService
 import me.golf.kotlin.domain.bank.dto.*
+import me.golf.kotlin.domain.bank.error.BankAccountException
 import me.golf.kotlin.domain.bank.history.application.TransferHistoryService
 import me.golf.kotlin.domain.bank.history.dto.HistorySummaryResponseDto
 import me.golf.kotlin.domain.bank.history.model.TransferStatus
@@ -58,6 +59,25 @@ class BankAccountControllerTest {
 
         // then
         assertThat(result.statusCode).isEqualTo(HttpStatus.OK)
+    }
+
+    @Test
+    @DisplayName("계좌 생성 요청 시 지원하지 않는 은행이 존재하면 Exception을 발생시킨다.")
+    fun saveFail() {
+        // given
+        val requestDto = BankAccountSaveApiRequestDto(
+            name = "테스트입니다.",
+            bankName = "스탠다드",
+            password = "1231234",
+            number = "31233210214"
+        )
+
+        // when
+        val exception = catchException { bankAccountController.save(requestDto, customUserDetails) }
+
+
+        // then
+        assertThat(exception).isInstanceOf(BankAccountException.ConvertBankNameDeniedException::class.java)
     }
 
     @Test

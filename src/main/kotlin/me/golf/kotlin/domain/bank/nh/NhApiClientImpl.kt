@@ -2,6 +2,7 @@ package me.golf.kotlin.domain.bank.nh
 
 import me.golf.kotlin.domain.bank.client.BankAccountApiClient
 import me.golf.kotlin.domain.bank.dto.*
+import me.golf.kotlin.domain.bank.nh.dto.*
 import me.golf.kotlin.domain.bank.nh.utils.NhUrlUtils
 import me.golf.kotlin.domain.bank.policy.DefaultValuePolicy.DEFAULT_BALANCE
 import me.golf.kotlin.domain.bank.policy.DefaultValuePolicy.DEFAULT_NH_VALUE
