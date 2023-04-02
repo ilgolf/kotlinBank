@@ -14,14 +14,14 @@ import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.SliceImpl
 import java.time.LocalDateTime
 
-internal class TransferHistoryServiceTest {
+internal class PaymentHistoryServiceTest {
 
     private val transferHistoryRepository: TransferHistoryRepository = mockk()
-    private lateinit var transferHistoryService: TransferHistoryService
+    private lateinit var paymentHistoryService: PaymentHistoryService
 
     @BeforeEach
     fun init() {
-        transferHistoryService = TransferHistoryService(transferHistoryRepository)
+        paymentHistoryService = PaymentHistoryService(transferHistoryRepository)
     }
 
     @Test
@@ -43,7 +43,7 @@ internal class TransferHistoryServiceTest {
         every { transferHistoryRepository.findHistoryByBankAccountId(any(), any(), any()) } returns responseDtos
 
         // when
-        val histories = transferHistoryService.getHistories(1L, 1L, PageRequest.of(0, 10))
+        val histories = paymentHistoryService.getHistories(1L, 1L, PageRequest.of(0, 10))
 
         // then
         assertThat(histories.contents[0].memberNickname).isEqualTo("테스트 회원")

@@ -39,6 +39,18 @@ services:
     volumes:
       - /Users/nogyeongtae/Shared/data/golf-redis:/var/lib/redis
 
+  rabbitmq:
+    image: rabbitmq:3.9.5-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - ~/.docker-conf/rabbitmq/data/:/var/lib/rabbitmq/mnesia/
+      - ./rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
+    environment:
+      RABBITMQ_DEFAULT_USER: "nokt"
+      RABBITMQ_DEFAULT_PASS: "1234"
+
   app:
     image: ilgolf/bank:latest
     container_name: bank
@@ -49,3 +61,4 @@ services:
     depends_on:
       - mysql_db
       - redis
+      - rabbitmq

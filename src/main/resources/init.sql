@@ -46,11 +46,17 @@ create index i_nickname on member (nickname);
 create table transfer_history
 (
     transfer_history_id bigint auto_increment not null,
-    created_at          datetime,
-    last_modified_date  datetime,
     bank_id             bigint                not null,
     client_id           bigint                not null,
-    transfer_money      numeric(19, 2),
-    transfer_status     varchar(255)          not null,
+    transfer_money      numeric(19, 2)        not null,
+    transfer_status     varchar(30)           not null,
+    result_message      varchar(255)          not null,
+    last_modified_date  datetime,
+    created_at          datetime,
+    created_by          bigint,
+    last_modified_by    bigint,
     primary key (transfer_history_id)
-)
+);
+
+create index i_bank_id on transfer_history (bank_id);
+create index i_client_id on transfer_history (client_id);

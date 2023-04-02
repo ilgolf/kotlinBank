@@ -2,8 +2,11 @@ package me.golf.kotlin.domain.bank.model
 
 import com.querydsl.jpa.impl.JPAQueryFactory
 import me.golf.kotlin.domain.bank.dto.BankAccountSummaryWithFinAccount
+import me.golf.kotlin.domain.bank.dto.FinAccountAndBankIdDto
 import me.golf.kotlin.domain.bank.dto.QBankAccountSummaryWithFinAccount
+import me.golf.kotlin.domain.bank.dto.QFinAccountAndBankIdDto
 import me.golf.kotlin.domain.bank.model.QBankAccount.*
+import me.golf.kotlin.domain.bank.payment.dto.FinAccountDto
 import org.springframework.transaction.annotation.Transactional
 
 open class BankAccountCustomRepositoryImpl(
@@ -31,5 +34,14 @@ open class BankAccountCustomRepositoryImpl(
             .set(bankAccount.registerNumber, registerNumber)
             .where(bankAccount.id.eq(bankAccountId))
             .execute()
+    }
+
+    override fun findFinAccountBy(bankId: Long): FinAccountAndBankIdDto? {
+        return query.select(QFinAccountAndBankIdDto(
+            bankAccount.id,
+            bankAccount.finAccount))
+            .from(bankAccount)
+            .where(bankAccount.id.eq(bankId))
+            .fetchOne()
     }
 }

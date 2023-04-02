@@ -28,4 +28,7 @@ enum class ErrorCode(val message: String, val status: Int) {
     DUPLICATE_ACCOUNT_NICKNAME("이미 존재하는 계좌 별칭입니다.", 400),
     CONVERT_BANK_NAME_DENIED("변경 불가능한 은행 이름입니다. 확인해주세요", 400),
     TRY_LOCK_DENIED("정상적인 접근이 아닙니다.", 400),
+
+    // payment
+    PAYMENT_FAIL("결제에 실패했습니다.", 400),
 }

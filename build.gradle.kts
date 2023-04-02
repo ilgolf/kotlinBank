@@ -45,7 +45,11 @@ dependencies {
 	annotationProcessor("org.projectlombok:lombok")
 
 	// webflux
-	implementation("org.springframework.boot:spring-boot-starter-webflux:2.7.5")
+	implementation("org.springframework.boot:spring-boot-starter-webflux")
+
+	// RabbitMQ
+	implementation("org.springframework.boot:spring-boot-starter-amqp")
+	implementation("org.springframework.retry:spring-retry")
 
 	// Database
 	runtimeOnly("com.h2database:h2")
@@ -66,6 +70,10 @@ dependencies {
 
 	//coolSMS
 	implementation("net.nurigo:sdk:4.2.4")
+
+	//coroutine
+	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
+	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
 
 	// test
 	testImplementation("org.springframework.boot:spring-boot-starter-test")

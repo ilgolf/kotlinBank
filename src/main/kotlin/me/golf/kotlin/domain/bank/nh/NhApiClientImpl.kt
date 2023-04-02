@@ -16,7 +16,7 @@ import java.net.URI
 import java.util.stream.Collectors
 
 @Component
-@Profile("dev", "prd", "local")
+@Profile("dev", "prd")
 class NhApiClientImpl(
     private val webClient: WebClient
 ) : BankAccountApiClient {

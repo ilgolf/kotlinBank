@@ -8,7 +8,7 @@ import me.golf.kotlin.domain.bank.dto.BankAccountInfoResponseDto
 import me.golf.kotlin.domain.bank.dto.BankAccountSaveApiRequestDto
 import me.golf.kotlin.domain.bank.dto.BankAccountUpdateRequestDto
 import me.golf.kotlin.domain.bank.dto.SimpleBankAccountIdResponseDto
-import me.golf.kotlin.domain.bank.history.application.TransferHistoryService
+import me.golf.kotlin.domain.bank.history.application.PaymentHistoryService
 import me.golf.kotlin.global.security.CustomUserDetails
 import org.springframework.data.domain.Pageable
 import org.springframework.data.web.PageableDefault
@@ -22,7 +22,7 @@ import javax.validation.Valid
 class BankAccountController(
     private val bankAccountCommandService: BankAccountCommandService,
     private val bankAccountQueryService: BankAccountQueryService,
-    private val transferHistoryService: TransferHistoryService
+    private val paymentHistoryService: PaymentHistoryService
 ) {
 
     @PostMapping
@@ -44,7 +44,7 @@ class BankAccountController(
         val bankAccountSummaryResponseDto =
             bankAccountQueryService.getBankAccountSummary(bankAccountId, customUserDetails.memberId)
         val historyResponseDto =
-            transferHistoryService.getHistories(bankAccountId, customUserDetails.memberId, pageable)
+            paymentHistoryService.getHistories(bankAccountId, customUserDetails.memberId, pageable)
 
         return ResponseEntity.ok(BankAccountInfoResponseDto(bankAccountSummaryResponseDto, historyResponseDto))
     }
