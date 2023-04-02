@@ -8,13 +8,15 @@ object TestTransferHistoryUtils {
 
     val transferMoney: BigDecimal = BigDecimal.valueOf(5000)
     const val client = "테스트용 클라이언트"
+    const val failCause = "오결제"
 
     fun toEntity(): TransferHistory {
         return TransferHistory(
             transferMoney,
             1L,
             1L,
-            TransferStatus.WITHDRAWAL
+            TransferStatus.WITHDRAWAL,
+            failCause
         )
     }
 
@@ -23,7 +25,8 @@ object TestTransferHistoryUtils {
             transferMoney,
             memberId,
             bankId,
-            TransferStatus.WITHDRAWAL
+            TransferStatus.WITHDRAWAL,
+            failCause
         )
     }
 }

@@ -6,26 +6,26 @@ data class NhCommonRequestHeader(
 
 
     @field:JsonProperty("ApiNm")
-    val ApiNm: String,
+    val apiNm: String,
 
     @field:JsonProperty("Tsymd")
-    val Tsymd: String,
+    val tsymd: String,
 
     @field:JsonProperty("Trtm")
-    val Trtm: String,
+    val trtm: String,
 
     @field:JsonProperty("Iscd")
-    val Iscd: String,
+    val iscd: String,
 
     @field:JsonProperty("FintechApsno")
-    val FintechApsno: String,
+    val fintechApsno: String,
 
     @field:JsonProperty("ApiSvcCd")
-    val APISvcCd: String,
+    val apiSvcCd: String,
 
     @field:JsonProperty("IsTuno")
-    val Istuno: String,
+    val istuno: String,
 
     @field:JsonProperty("AccessToken")
-    val AccessToken: String
+    val accessToken: String
 )

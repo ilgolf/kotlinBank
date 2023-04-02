@@ -6,6 +6,8 @@ object NhHeaderValueUtils {
 
     const val FIN_ACCOUNT_API_NAME_VALUE = "OpenFinAccountDirect"
     const val BALANCE_API_NAME_VALUE = "InquireBalance"
+    const val PAYMENT_API_NAME_VALUE = "DrawingTransfer"
+    const val REFUND_API_NAME_VALUE = "ReceivedTransferAccountNumber"
     const val GET_FIN_ACCOUNT_API_NAME_VALUE = "CheckOpenFinAccountDirect"
     const val AGENCY_CODE_VALUE = "001697"
     const val FINTECH_NUMBER_VALUE = "001"

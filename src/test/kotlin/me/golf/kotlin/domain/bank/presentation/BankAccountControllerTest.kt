@@ -7,7 +7,7 @@ import me.golf.kotlin.domain.bank.application.BankAccountCommandService
 import me.golf.kotlin.domain.bank.application.BankAccountQueryService
 import me.golf.kotlin.domain.bank.dto.*
 import me.golf.kotlin.domain.bank.error.BankAccountException
-import me.golf.kotlin.domain.bank.history.application.TransferHistoryService
+import me.golf.kotlin.domain.bank.history.application.PaymentHistoryService
 import me.golf.kotlin.domain.bank.history.dto.HistorySummaryResponseDto
 import me.golf.kotlin.domain.bank.history.model.TransferStatus
 import me.golf.kotlin.domain.bank.history.model.utils.TestTransferHistoryUtils
@@ -22,7 +22,6 @@ import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.SliceImpl
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import java.time.LocalDate
 import java.time.LocalDateTime
 
 class BankAccountControllerTest {
@@ -31,12 +30,12 @@ class BankAccountControllerTest {
     private lateinit var bankAccountController: BankAccountController
     private val bankAccountCommandService = mockk<BankAccountCommandService>()
     private val bankAccountQueryService = mockk<BankAccountQueryService>()
-    private val transferHistoryService = mockk<TransferHistoryService>()
+    private val paymentHistoryService = mockk<PaymentHistoryService>()
 
     @BeforeEach
     fun init() {
         customUserDetails = CustomUserDetails.of(GivenMember.toMember())
-        bankAccountController = BankAccountController(bankAccountCommandService, bankAccountQueryService, transferHistoryService)
+        bankAccountController = BankAccountController(bankAccountCommandService, bankAccountQueryService, paymentHistoryService)
     }
 
     @Test
@@ -104,7 +103,7 @@ class BankAccountControllerTest {
         val resDtos = SliceImpl(arrayListOf(historySummaryResDto), PageRequest.of(0, 10), true)
 
         every { bankAccountQueryService.getBankAccountSummary(any(), any()) } returns summaryResDto
-        every { transferHistoryService.getHistories(any(), any(), any()) } returns SliceCustomResponse.of(resDtos)
+        every { paymentHistoryService.getHistories(any(), any(), any()) } returns SliceCustomResponse.of(resDtos)
 
         // when
         val result: ResponseEntity<BankAccountInfoResponseDto> = bankAccountController
