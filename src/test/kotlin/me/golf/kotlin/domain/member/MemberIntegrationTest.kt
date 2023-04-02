@@ -106,7 +106,6 @@ class MemberIntegrationTest
 
     @Test
     @DisplayName("업데이트 통합 시나리오 테스트")
-    @WithMockUser
     fun updateSuccess() {
         // given
         val requestDto = MemberApiUpdateRequestDto(
@@ -133,7 +132,6 @@ class MemberIntegrationTest
 
     @Test
     @DisplayName("필드 중 하나라도 빈 값이면 400 badRequest")
-    @WithMockUser
     fun updateFailByFieldError() {
         // given
         val requestDto = MemberApiUpdateRequestDto(

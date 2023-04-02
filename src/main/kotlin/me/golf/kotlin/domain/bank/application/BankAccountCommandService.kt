@@ -2,7 +2,7 @@ package me.golf.kotlin.domain.bank.application
 
 import me.golf.kotlin.domain.bank.client.BankAccountApiClient
 import me.golf.kotlin.domain.bank.dto.BankAccountSaveRequestDto
-import me.golf.kotlin.domain.bank.dto.PublishRegisterNumberRequestDto
+import me.golf.kotlin.domain.bank.nh.dto.PublishRegisterNumberRequestDto
 import me.golf.kotlin.domain.bank.dto.SimpleBankAccountIdResponseDto
 import me.golf.kotlin.domain.bank.error.BankAccountException
 import me.golf.kotlin.domain.bank.model.BankAccountRepository

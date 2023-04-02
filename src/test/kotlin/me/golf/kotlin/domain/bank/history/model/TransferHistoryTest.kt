@@ -16,7 +16,8 @@ internal class TransferHistoryTest {
             transferMoney = BigDecimal.valueOf(6000),
             client = 1L,
             transferStatus = TransferStatus.DEPOSIT,
-            bankId = 1L
+            bankId = 1L,
+            resultMessage = TestTransferHistoryUtils.failCause
         )
 
         val transferHistory = TestTransferHistoryUtils.toEntity()

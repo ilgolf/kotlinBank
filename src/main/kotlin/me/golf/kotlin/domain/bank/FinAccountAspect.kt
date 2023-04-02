@@ -1,83 +1,92 @@
 package me.golf.kotlin.domain.bank
 
-import lombok.extern.slf4j.Slf4j
 import me.golf.kotlin.domain.bank.application.BankAccountQueryService
 import me.golf.kotlin.domain.bank.client.BankAccountApiClient
-import me.golf.kotlin.domain.bank.dto.PublishRegisterNumberRequestDto
+import me.golf.kotlin.domain.bank.nh.dto.PublishRegisterNumberRequestDto
 import me.golf.kotlin.domain.bank.model.BankAccount
+import me.golf.kotlin.domain.bank.model.BankAccountRepository
+import me.golf.kotlin.domain.bank.policy.DefaultValuePolicy.DEFAULT_NH_VALUE
 import me.golf.kotlin.global.security.CustomUserDetails
 import org.aspectj.lang.ProceedingJoinPoint
 import org.aspectj.lang.annotation.Around
 import org.aspectj.lang.annotation.Aspect
 import org.aspectj.lang.reflect.MethodSignature
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 
-@Slf4j
 @Aspect
 @Component
 class FinAccountAspect(
     private val bankAccountQueryService: BankAccountQueryService,
     private val bankAccountApiClient: BankAccountApiClient,
+    private val bankAccountRepository: BankAccountRepository
 ) {
+
+    private val log = LoggerFactory.getLogger(FinAccountAspect::class.java)
 
     @Around("@annotation(me.golf.kotlin.domain.bank.RequireFinAccount)")
     fun validateAndGet(joinPoint: ProceedingJoinPoint): Any? {
-        val methodSignature = joinPoint.signature as MethodSignature
-        val method = methodSignature.method
-
+        val method = (joinPoint.signature as MethodSignature).method
         val lookupType = method.getAnnotation(RequireFinAccount::class.java).type
 
         val args = joinPoint.args
 
-        if (lookupType == LookupType.ONE) {
-            if (args.size == 2 && args[0] is CustomUserDetails && args[1] is Long) {
-                val memberId = (args[0] as CustomUserDetails).memberId
-                val bankId = args[1] as Long
+        return when (lookupType) {
+            LookupType.ONE -> validateAndGetOne(args, joinPoint)
+            LookupType.SEVERAL -> validateAndGetSeveral(args, joinPoint)
+        }
+    }
 
-                val bankAccount = bankAccountQueryService.getBankAccount(bankId, memberId)
-                var registerNumber = bankAccount.registerNumber
-
-                if (registerNumber == "-1") {
-                    val requestDto =
-                        PublishRegisterNumberRequestDto.of(true, bankAccount.bankName.code, bankAccount.number)
-
-                    registerNumber = bankAccountApiClient.publishRegisterNumberConnection(requestDto)
-                }
-
-                if (bankAccount.finAccount == "-1") {
-                    val finAccount = bankAccountApiClient.getFinAccount(registerNumber)
-                    bankAccount.updateFinAccountAndRegisterNumber(finAccount, registerNumber)
-                }
-            }
+    private fun validateAndGetOne(args: Array<Any>, joinPoint: ProceedingJoinPoint): Any? {
+        if (args.size != 2 || args[0] !is CustomUserDetails || args[1] !is Long) {
+            return null
         }
 
-        if (lookupType == LookupType.SEVERAL) {
-            if (args.isNotEmpty() && args[0] is CustomUserDetails) {
-                val memberId = (args[0] as CustomUserDetails).memberId
+        val userDetails = args[0] as CustomUserDetails
+        val bankId = args[1] as Long
+        val bankAccount = bankAccountQueryService.getBankAccount(bankId, userDetails.memberId)
+        var registerNumber = bankAccount.registerNumber
 
-                val bankAccounts = bankAccountQueryService.getBankAccountsBy(memberId)
-                    .filter { it.registerNumber == "-1" }
+        if (registerNumber == DEFAULT_NH_VALUE) {
+            log.info("등록 번호 발급 진행 ID 정보 : {}", bankAccount.id)
 
-                bankAccounts
-                    .filter { it.registerNumber == "-1" }
-                    .forEach { it.updateFinAccountAndRegisterNumber(it.finAccount, getRegisterNumber(it)) }
+            registerNumber = bankAccountApiClient.publishRegisterNumberConnection(
+                PublishRegisterNumberRequestDto.of(true, bankAccount.bankName.code, bankAccount.number))
+        }
 
-                bankAccounts
-                    .filter { it.registerNumber == "-1" }
-                    .forEach {
-                        it.updateFinAccountAndRegisterNumber(
-                            bankAccountApiClient.getFinAccount(it.registerNumber),
-                            it.registerNumber
-                        )
-                    }
-            }
+        val finAccount = getFinAccount(bankAccount, registerNumber)
+
+        bankAccountRepository.updateFinAccountAndRegisterNumber(finAccount = finAccount, registerNumber = registerNumber, bankId)
+
+        return joinPoint.proceed()
+    }
+
+    private fun validateAndGetSeveral(args: Array<Any>, joinPoint: ProceedingJoinPoint): Any? {
+        if (args.isEmpty() || args[0] !is CustomUserDetails) {
+            return null
+        }
+
+        val userDetails = args[0] as CustomUserDetails
+        val memberId = userDetails.memberId
+
+        val bankAccounts = bankAccountQueryService.getBankAccountsBy(memberId)
+            .filter { it.registerNumber == DEFAULT_NH_VALUE }
+
+        bankAccounts.forEach {
+            val registerNumber = getRegisterNumber(it)
+            val finAccount = bankAccountApiClient.getFinAccount(registerNumber)
+            bankAccountRepository.updateFinAccountAndRegisterNumber(finAccount, registerNumber, it.id)
         }
 
         return joinPoint.proceed()
     }
 
-    private fun getRegisterNumber(ac: BankAccount) =
+    private fun getFinAccount(bankAccount: BankAccount, registerNumber: String) =
+        if (bankAccount.finAccount == DEFAULT_NH_VALUE) bankAccountApiClient.getFinAccount(registerNumber)
+        else bankAccount.finAccount
+
+    private fun getRegisterNumber(bankAccount: BankAccount) =
         bankAccountApiClient.publishRegisterNumberConnection(
-            PublishRegisterNumberRequestDto.of(true, ac.bankName.code, ac.number)
+            PublishRegisterNumberRequestDto.of(true, bankAccount.bankName.code, bankAccount.number)
         )
 }

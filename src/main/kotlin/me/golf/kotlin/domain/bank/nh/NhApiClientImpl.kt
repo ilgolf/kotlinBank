@@ -2,11 +2,16 @@ package me.golf.kotlin.domain.bank.nh
 
 import me.golf.kotlin.domain.bank.client.BankAccountApiClient
 import me.golf.kotlin.domain.bank.dto.*
+import me.golf.kotlin.domain.bank.nh.dto.*
 import me.golf.kotlin.domain.bank.nh.utils.NhUrlUtils
+import me.golf.kotlin.domain.bank.policy.DefaultValuePolicy.DEFAULT_BALANCE
+import me.golf.kotlin.domain.bank.policy.DefaultValuePolicy.DEFAULT_NH_VALUE
+import org.slf4j.LoggerFactory
 import org.springframework.context.annotation.Profile
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
+import reactor.core.publisher.Mono
 import java.net.URI
 import java.util.stream.Collectors
 
@@ -16,14 +21,14 @@ class NhApiClientImpl(
     private val webClient: WebClient
 ) : BankAccountApiClient {
 
+    private val log = LoggerFactory.getLogger(NhApiClientImpl::class.java)
+
     override fun publishRegisterNumberConnection(publishRegisterNumberRequestDto: PublishRegisterNumberRequestDto): String =
-        publishFinAccountHeadersSpec(NhUrlUtils.FIN_ACCOUNT_URL, publishRegisterNumberRequestDto)
-            .retrieve()
-            .bodyToMono(PublishFinAccountResponseDto::class.java)
+        publishFinAccountHeadersSpec(publishRegisterNumberRequestDto)
             .flux()
             .toStream()
             .findFirst()
-            .orElse(PublishFinAccountResponseDto("-1"))
+            .orElse(PublishRegisterNumberResponseDto.createDefault(DEFAULT_NH_VALUE))
             .registerNumber
 
     override fun getBalances(finAccounts: List<String>): MutableList<String> =
@@ -33,11 +38,11 @@ class NhApiClientImpl(
             .collect(Collectors.toList())
 
     override fun getBalance(finAccount: String): BalanceResponseDto {
-        val balance = getBalanceWithFinAccount(finAccount)
+        val balance = postRequestHeadersAndBodySpec(BalanceRequestDto.of(finAccount))
             .flux()
             .toStream()
             .findFirst()
-            .orElse(BalanceNhResponseDto("????"))
+            .orElse(BalanceNhResponseDto.createDefault(DEFAULT_BALANCE))
             .balance
 
         return BalanceResponseDto(balance)
@@ -48,7 +53,7 @@ class NhApiClientImpl(
             .flux()
             .toStream()
             .findFirst()
-            .orElse(GetFinAccountResponseDto("-1")) // 미 발급된 경우 재발급을 추후에 할 수 있으므로 -1로 미발급 회원 구분
+            .orElse(GetFinAccountResponseDto.createDefault(DEFAULT_NH_VALUE))
             .finAccount
     }
 
@@ -59,27 +64,37 @@ class NhApiClientImpl(
         .bodyValue(GetFinAccountRequestDto.of(registerNumber))
         .retrieve()
         .bodyToMono(GetFinAccountResponseDto::class.java)
+        .onErrorResume {
+            log.error("NH connection fail cause: {}", it.message)
+            Mono.empty()
+        }
 
-    private fun getBalanceWithFinAccount(finAccount: String) =
-        postRequestHeadersAndBodySpec(NhUrlUtils.FIND_BALANCE_URL, BalanceRequestDto.of(finAccount))
-            .retrieve()
-            .bodyToMono(BalanceNhResponseDto::class.java)
 
     private fun publishFinAccountHeadersSpec(
-        url: String,
         finAccountRequestDto: PublishRegisterNumberRequestDto
     ) = webClient
         .post()
-        .uri(URI.create(url))
+        .uri(URI.create(NhUrlUtils.FIN_ACCOUNT_URL))
         .contentType(MediaType.APPLICATION_JSON)
         .bodyValue(finAccountRequestDto)
+        .retrieve()
+        .bodyToMono(PublishRegisterNumberResponseDto::class.java)
+        .onErrorResume {
+            log.error("NH connection fail cause: {}", it.message)
+            Mono.empty()
+        }
 
     private fun postRequestHeadersAndBodySpec(
-        url: String,
         requestDto: BalanceRequestDto
     ) = webClient
         .post()
-        .uri(URI(url))
+        .uri(URI(NhUrlUtils.FIND_BALANCE_URL))
         .contentType(MediaType.APPLICATION_JSON)
         .bodyValue(requestDto)
+        .retrieve()
+        .bodyToMono(BalanceNhResponseDto::class.java)
+        .onErrorResume {
+            log.error("NH connection fail cause: {}", it.message)
+            Mono.empty()
+        }
 }

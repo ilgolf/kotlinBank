@@ -3,6 +3,7 @@ package me.golf.kotlin.domain.bank.model
 import lombok.AccessLevel
 import lombok.NoArgsConstructor
 import me.golf.kotlin.domain.member.model.Member
+import me.golf.kotlin.global.common.BaseEntity
 import org.hibernate.annotations.DynamicUpdate
 import org.hibernate.annotations.Where
 import org.springframework.security.crypto.password.PasswordEncoder
@@ -35,7 +36,7 @@ class BankAccount(
 
     @Column(name = "account_name", unique = false)
     var name: String,
-) {
+): BaseEntity() {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "account_id", unique = true, nullable = false, updatable = false)
@@ -80,10 +81,5 @@ class BankAccount(
 
     override fun hashCode(): Int {
         return id.hashCode()
-    }
-
-    fun updateFinAccountAndRegisterNumber(finAccount: String, registerNumber: String) {
-        this.finAccount = finAccount
-        this.registerNumber = registerNumber
     }
 }

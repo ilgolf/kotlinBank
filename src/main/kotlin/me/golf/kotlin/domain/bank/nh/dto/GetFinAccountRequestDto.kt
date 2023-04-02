@@ -1,37 +1,32 @@
-package me.golf.kotlin.domain.bank.dto
+package me.golf.kotlin.domain.bank.nh.dto
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import me.golf.kotlin.domain.bank.nh.utils.NhHeaderValueUtils
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
-data class PublishRegisterNumberRequestDto(
+data class GetFinAccountRequestDto(
 
     @field:JsonProperty("Header")
-    val commonHeader: NhCommonHeader,
+    val commonHeader: NhCommonRequestHeader,
 
-    @field:JsonProperty("DrtrRgyn")
-    val withdrawalTransferYn: String,
+    @field:JsonProperty("Rgno")
+    val registerNumber: String,
 
     @field:JsonProperty("BrdtBrno")
-    val birth: String,
-
-    @field:JsonProperty("Bncd")
-    val bankCode: String,
-
-    @field:JsonProperty("Acno")
-    val accountNumber: String
+    val birth: String
 ) {
+
     companion object {
-        fun of(drtrRgyn: Boolean, bnCd: String, acno: String): PublishRegisterNumberRequestDto {
+        fun of(registerNumber: String): GetFinAccountRequestDto {
 
             val nowDateTimeParse = LocalDateTime.now()
                 .format(DateTimeFormatter.ofPattern("yyyyMMdd hhmmss"))
                 .split(" ")
 
-            return PublishRegisterNumberRequestDto(
-                NhCommonHeader(
-                    NhHeaderValueUtils.FIN_ACCOUNT_API_NAME_VALUE,
+            return GetFinAccountRequestDto(
+                NhCommonRequestHeader(
+                    NhHeaderValueUtils.GET_FIN_ACCOUNT_API_NAME_VALUE,
                     nowDateTimeParse[0],
                     nowDateTimeParse[1],
                     NhHeaderValueUtils.AGENCY_CODE_VALUE,
@@ -40,10 +35,8 @@ data class PublishRegisterNumberRequestDto(
                     NhHeaderValueUtils.createAgencyDealCode().toString(),
                     NhHeaderValueUtils.ACCESS_TOKEN_VALUE
                 ),
-                if (drtrRgyn) "Y" else "N",
-                "19961025", // 농협에서 내 생일에 대해서만 API를 제공해주므로 Default 처럼 가져가는걸로
-                bnCd,
-                acno
+                registerNumber,
+                "19961025"
             )
         }
     }

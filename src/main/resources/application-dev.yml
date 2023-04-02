@@ -19,11 +19,16 @@ spring:
       hibernate:
         format_sql: true
     show-sql: true
-    open-in-view: false
 
   redis:
     host: redis
     port: 6379
+
+  rabbitmq:
+    host: rabbitmq
+    port: 5672
+    username: usernokt
+    password: 1234
 
 jwt:
   secret: ${SECRET_KEY}
@@ -43,3 +48,11 @@ logging:
       netty:
         http:
           client: debug
+
+
+message:
+  queue:
+    topic-key: golf.payments
+    payment-queue: payment.init
+    refund-queue: refund.init
+    dead-topic-key: dead.letter.payments
