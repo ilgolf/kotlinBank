@@ -3,7 +3,9 @@
 ## ⚙️Tech Stack
 
 Back-End : Kotlin + Spring boot + JWT + Spring Security
+
 Database : Redis + MySQL
+
 Infra (etc) : Docker + RabbitMQ
 
 ## 기능 요구사항 
