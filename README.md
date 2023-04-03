@@ -47,3 +47,31 @@ RabbitMQ는 그에 반해 비동기로 독립적으로 동작할 수 있게 해�
 
 
 ## etc implementation Design
+
+### Get Balance
+
+잔액 조회를 할 때에 외부 서비스를 이용하므로 영향도를 마찬가지로 없애야함 다만 이 때에는 잔액을 필히 받아와야하고 MQ로 처리할 정도로 재시도 전략이 필요하지 않고 또한 못받아 왔을 때 특정한 값을 보내줘야하므로 동기로 처리하되 에러 핸들링을 통해 영향도를 제거
+
+또한 API를 두 개로 나눠 Redis에 존재하는 가장 최근에 조회된 정보 또는 ???? 값을 화면에 먼저 보여주고 이후 Lazy하게 다른 API에서 외부 서비스인 NH에서 잔액 정보를 최신화 하여 받아옴
+
+### Get FinAccount
+
+FinAccount는 농협에 핀테크 서비스를 이용할 수 있도록 도와주는 필수 로직 이 또한 계좌 개설 시 외부 서비스에서 받아와야하기 때문에 에러 핸들링으로 영향도 제거 MQ를 사용하여 비동기로 처리하기에 계좌 생성은 반드시 사용자가 성공 유무를 알아야 하기 때문에 동기로 처리 
+
+
+### WebClient Lazy
+
+```kotlin
+publishFinAccountHeadersSpec(publishRegisterNumberRequestDto)
+            .flux()
+            .toStream()
+            .findFirst()
+            .orElse(PublishRegisterNumberResponseDto.createDefault(DEFAULT_NH_VALUE))
+            .registerNumber
+```
+
+지연 시켜 stream으로 받아오게 처리하여 비동기는 아니지만 비교적 성능이 block 보단 좋기 때문에 사용. 대규모 호출에 대해 적은 자원으로 처리할 수 있게 개선 (비동기로 하지 않은 이유는 반드시 받아와 처리해야 하는 작업이기 때문)
+
+이 후 코틀린의 코루틴을 사용하면 더 수월하게 받아올 수 있게 성능 개선 가능 (코루틴 Scope 및 Handling 학습 필요)
+
+참고한 포스팅 : https://medium.com/@odysseymoon/spring-webclient-%EC%82%AC%EC%9A%A9%EB%B2%95-5f92d295edc0
