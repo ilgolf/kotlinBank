@@ -1,5 +1,10 @@
 # 코틀린을 이용한 핀테크 서비스
 
+## 진행 이유
+
+코틀린을 사용하여 토이 프로젝트를 진행하며 코틀린에 친숙해지고 싶은 목적으로 진행한 프로젝트. 이외에 핀테크 서비스 또는 e-커머스의 결제 모듈에 대한 관심이 있어 관련 도메인으로 선정하여 작업
+또한 서비스 특성상 비동기나 다양한 비즈니스 기술적 고민이 가능하기 때문에 경험해보고싶어서 이 프로젝트를 좀 더 고도화 하여 진행 
+
 ## ⚙️Tech Stack
 
 Back-End : Kotlin + Spring boot + JWT + Spring Security
@@ -16,8 +21,6 @@ notion URL : https://www.notion.so/dev-golf/Banking-0b00d27d7be14690a44a77610cb4
 
 <img width="1126" alt="image" src="https://user-images.githubusercontent.com/77387861/229456761-02353690-7a47-4756-81ed-b802d0db61a1.png">
 
-
-## USE CASE 
 
 ## Core API Process (payment & refund)
 
