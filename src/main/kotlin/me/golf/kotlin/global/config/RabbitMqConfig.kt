@@ -61,7 +61,7 @@ class RabbitMqConfig(
         val retryTemplate = RetryTemplate()
         val retryPolicy = SimpleRetryPolicy(5) // Set the maximum number of retry attempts
         val backOffPolicy = FixedBackOffPolicy()
-        backOffPolicy.backOffPeriod = 60000 // Set the backoff period to 1 minute (60000 milliseconds)
+        backOffPolicy.backOffPeriod = 3000 // Set the backoff period to 1 minute (60000 milliseconds)
 
         retryTemplate.setRetryPolicy(retryPolicy)
         retryTemplate.setBackOffPolicy(backOffPolicy)
