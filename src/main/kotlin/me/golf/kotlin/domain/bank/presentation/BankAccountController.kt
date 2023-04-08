@@ -1,13 +1,13 @@
 package me.golf.kotlin.domain.bank.presentation
 
-import me.golf.kotlin.domain.bank.LookupType
-import me.golf.kotlin.domain.bank.RequireFinAccount
 import me.golf.kotlin.domain.bank.application.BankAccountCommandService
 import me.golf.kotlin.domain.bank.application.BankAccountQueryService
+import me.golf.kotlin.domain.bank.application.FinAccountService
 import me.golf.kotlin.domain.bank.dto.BankAccountInfoResponseDto
 import me.golf.kotlin.domain.bank.dto.BankAccountSaveApiRequestDto
 import me.golf.kotlin.domain.bank.dto.BankAccountUpdateRequestDto
 import me.golf.kotlin.domain.bank.dto.SimpleBankAccountIdResponseDto
+import me.golf.kotlin.domain.bank.error.BankAccountException
 import me.golf.kotlin.domain.bank.history.application.PaymentHistoryService
 import me.golf.kotlin.global.security.CustomUserDetails
 import org.springframework.data.domain.Pageable
@@ -22,7 +22,8 @@ import javax.validation.Valid
 class BankAccountController(
     private val bankAccountCommandService: BankAccountCommandService,
     private val bankAccountQueryService: BankAccountQueryService,
-    private val paymentHistoryService: PaymentHistoryService
+    private val paymentHistoryService: PaymentHistoryService,
+    private val finAccountService: FinAccountService
 ) {
 
     @PostMapping
@@ -54,11 +55,16 @@ class BankAccountController(
         ResponseEntity.ok(bankAccountQueryService.getBankAccountsByMemberId(customUserDetails.memberId))
 
     @PatchMapping("/balance/{bankAccountId}")
-    @RequireFinAccount(type = LookupType.ONE)
-    fun updateBalance(@AuthenticationPrincipal customUserDetails: CustomUserDetails,
-                      @PathVariable bankAccountId: Long) =
+    fun updateBalance(
+        @AuthenticationPrincipal customUserDetails: CustomUserDetails,
+        @PathVariable bankAccountId: Long) {
+
+        if (!finAccountService.validateAndGetFinAccount(customUserDetails.memberId, bankAccountId)) {
+            throw BankAccountException.FinAccountNotFoundException()
+        }
 
         bankAccountQueryService.getBalance(bankAccountId, customUserDetails.memberId)
+    }
 
     @PatchMapping("/{bankAccountId}")
     fun update(
@@ -81,3 +87,4 @@ class BankAccountController(
         return ResponseEntity.noContent().build()
     }
 }
+

@@ -5,6 +5,7 @@ import io.mockk.mockk
 import me.golf.kotlin.domain.bank.TestBankAccountUtils
 import me.golf.kotlin.domain.bank.application.BankAccountCommandService
 import me.golf.kotlin.domain.bank.application.BankAccountQueryService
+import me.golf.kotlin.domain.bank.application.FinAccountService
 import me.golf.kotlin.domain.bank.dto.*
 import me.golf.kotlin.domain.bank.error.BankAccountException
 import me.golf.kotlin.domain.bank.history.application.PaymentHistoryService
@@ -31,11 +32,12 @@ class BankAccountControllerTest {
     private val bankAccountCommandService = mockk<BankAccountCommandService>()
     private val bankAccountQueryService = mockk<BankAccountQueryService>()
     private val paymentHistoryService = mockk<PaymentHistoryService>()
+    private val finAccountService = mockk<FinAccountService>()
 
     @BeforeEach
     fun init() {
         customUserDetails = CustomUserDetails.of(GivenMember.toMember())
-        bankAccountController = BankAccountController(bankAccountCommandService, bankAccountQueryService, paymentHistoryService)
+        bankAccountController = BankAccountController(bankAccountCommandService, bankAccountQueryService, paymentHistoryService, finAccountService)
     }
 
     @Test
