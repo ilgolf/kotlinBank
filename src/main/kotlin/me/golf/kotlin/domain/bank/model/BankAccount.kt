@@ -82,4 +82,9 @@ class BankAccount(
     override fun hashCode(): Int {
         return id.hashCode()
     }
+
+    fun updateFinAccountAndRegisterNumber(finAccount: String, registerNumber: String) {
+        this.finAccount = finAccount
+        this.registerNumber = registerNumber
+    }
 }

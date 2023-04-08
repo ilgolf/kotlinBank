@@ -1,8 +1,11 @@
 package me.golf.kotlin.domain.bank.presentation
 
 import io.mockk.coJustRun
+import io.mockk.every
+import io.mockk.justRun
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
+import me.golf.kotlin.domain.bank.application.FinAccountService
 import me.golf.kotlin.domain.bank.payment.application.PaymentQueueService
 import me.golf.kotlin.domain.bank.payment.dto.PaymentApiRequestDto
 import me.golf.kotlin.domain.bank.payment.dto.RefundApiRequestDto
@@ -20,10 +23,11 @@ internal class PaymentControllerTest {
     private val paymentQueueService: PaymentQueueService = mockk()
     lateinit var paymentController: PaymentController
     private val customUserDetails = CustomUserDetails.of(GivenMember.toMember())
+    private val finAccountService = mockk<FinAccountService>()
 
     @BeforeEach
     fun setup() {
-        paymentController = PaymentController(paymentQueueService)
+        paymentController = PaymentController(paymentQueueService, finAccountService)
     }
 
     @Test
@@ -36,7 +40,8 @@ internal class PaymentControllerTest {
             transferMoney = "10000"
         )
 
-        coJustRun { paymentQueueService.pay(any()) }
+        justRun { paymentQueueService.pay(any()) }
+        every { finAccountService.validateAndGetFinAccount(any(), any()) } returns true
 
         // when
         val result = runBlocking { paymentController.pay(requestDto, customUserDetails) }
@@ -58,7 +63,8 @@ internal class PaymentControllerTest {
             fromName = "소비자"
         )
 
-        coJustRun { paymentQueueService.refund(any()) }
+        justRun { paymentQueueService.refund(any()) }
+        every { finAccountService.validateAndGetFinAccount(any(), any()) } returns true
 
         // when
         val result = runBlocking { paymentController.refund(requestDto, customUserDetails) }

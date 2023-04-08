@@ -27,15 +27,6 @@ open class BankAccountCustomRepositoryImpl(
             .fetch()
     }
 
-    @Transactional
-    override fun updateFinAccountAndRegisterNumber(finAccount: String, registerNumber: String, bankAccountId: Long) {
-        query.update(bankAccount)
-            .set(bankAccount.finAccount, finAccount)
-            .set(bankAccount.registerNumber, registerNumber)
-            .where(bankAccount.id.eq(bankAccountId))
-            .execute()
-    }
-
     override fun findFinAccountBy(bankId: Long): FinAccountAndBankIdDto? {
         return query.select(QFinAccountAndBankIdDto(
             bankAccount.id,

@@ -8,6 +8,5 @@ interface BankAccountCustomRepository {
 
     fun findSummaryByMemberId(memberId: Long): List<BankAccountSummaryWithFinAccount>
 
-    fun updateFinAccountAndRegisterNumber(finAccount: String, registerNumber: String, bankAccountId: Long)
     fun findFinAccountBy(bankId: Long): FinAccountAndBankIdDto?
 }
