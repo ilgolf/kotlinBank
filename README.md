@@ -27,25 +27,37 @@ notion URL : https://www.notion.so/dev-golf/Banking-0b00d27d7be14690a44a77610cb4
 ### implementation Policy
 
 서비스 이용자가 타 플랫폼을 통해 우리 서비스로 구매 요청 시 결제 요청을 대신 은행에 보내준다. 또한 결제 후 히스토리를 쌓아 CS 대응을 빨리 할 수 있게 대응책을 마련해놓는다.
-다만, 외부 은행에 결제요청을 보낼 때 비동기로 처리하여 독립적으로 실행 되게 구현 또한 결제 요청만 완료시키고 API는 종료 시킬 것
 
-### RabbitMQ의 사용
+```kotlin
+override fun pay(finAccount: String, transferMoney: BigDecimal): String {
+    return webClient.post()
+        .uri(URI.create(NhUrlUtils.PAYMENT_URL))
+        .bodyValue(SimplePaymentRequestDto.of(finAccount, transferMoney))
+        .retrieve()
+        .onStatus(
+            { status -> status.is4xxClientError || status.is5xxServerError },
+            { response ->
+                Mono.error(
+                    SimplePaymentFailException(response.statusCode().reasonPhrase)
+                )
+            }
+        )
+        .bodyToMono<SimplePaymentResponseDto>()
+        .onErrorResume { error ->
+            NhPaymentApiClient.log.error("Payment failed: {}", error.message)
+            Mono.just(SimplePaymentResponseDto.createDefault(finAccount))
+        }
+        .flux()
+        .toStream()
+        .findFirst()
+        .orElseGet { SimplePaymentResponseDto.createDefault(finAccount) }
+        .header
+        .responseMessage
+}
+```
 
-사전 배경으로 깔아야 할게 있습니다. 현재 프로덕트는 대규모 서비스에서 결제가 오래걸려 트래픽 처리가 안되는 상황을 고려하여 우선 결제 요청을 하고 비동기로 결제하는 방식으로 구현했습니다. 비동기 방식으로 최초엔 @Async 등을 이용하여 비동기로 독립적으로 처리하는 방법을 고민했습니다,
-
-1. @Async는 따로 Thread pool 자원을 사용해야하는데 이 때 대기 Queue에 너무 많이 쌓이면 Exception이 발생하기 때문에 비즈니스에 영향을 줄 수 있습니다. 또한 Queue 사이즈를 늘리기에는 하나의 애플리케이션 서버에서 동작하기 때문에 한계가 존재합니다. 또한 실패 시 재시도가 불가능하며 한 번 오류가 나면 그 뒤에 요청까지 영향을 받을 수 있습니다. 
-
-RabbitMQ는 그에 반해 비동기로 독립적으로 동작할 수 있게 해주어 외부 서비스로 부터 내부 서비스가 영향을 받는 경우를 없애주며 따로 동작하는 하나의 인프라 요소란점 따로 디스크에 저장할 수 있는점을 고려해봤을 때 왠만한 요청에 버틸 수 있습니다. 설령 부하가 걸리더라도 자동 클러스터링이나 액티브 스탠바이 모드등을 이용하여 부하에 대한 대처가 가능합니다.
-
-재시도는 돈이 왔다갔다 하는 결제 서비스 특성상 자동으로 시도하면 중복 결제에 가능성이 있어 사용하지 않았습니다.
-
-### Design Structure
-
-![image](https://user-images.githubusercontent.com/77387861/229472955-c69ee095-90a3-4e0c-b6e5-87ca2d463f9e.png)
-
-
-오해할 수 있는데 Queue는 클러스터링 된게 아니고 RabbitMQ 하나에 두 개의 큐가 있는 상태이며 Spring Boot도 두 개로 되어있지만 표현상에 이유이며 로직을 보면 실제로는 하나로 이루어져 있습니다.
-
+NH에서는 https://developers.nonghyup.com/guide/GU_1000 따로 못받아온 사유를 응답 메시지에 담아 알려주고 있기 때문에 이 정보를 기반으로 HistoryDto 객체를 생성하여 실패 사유를 함께 저장해준다.
+400 or 500 에러 시 로그로 오류를 확인할 수 있게 
 
 ## etc implementation Design
 
@@ -59,28 +71,11 @@ RabbitMQ는 그에 반해 비동기로 독립적으로 동작할 수 있게 해�
 
 FinAccount는 농협에 핀테크 서비스를 이용할 수 있도록 도와주는 필수 로직 이 또한 계좌 개설 시 외부 서비스에서 받아와야하기 때문에 에러 핸들링으로 영향도 제거 MQ를 사용하여 비동기로 처리하기에 계좌 생성은 반드시 사용자가 성공 유무를 알아야 하기 때문에 동기로 처리 
 
-
-### WebClient Lazy
-
-```kotlin
-publishFinAccountHeadersSpec(publishRegisterNumberRequestDto)
-            .flux()
-            .toStream()
-            .findFirst()
-            .orElse(PublishRegisterNumberResponseDto.createDefault(DEFAULT_NH_VALUE))
-            .registerNumber
-```
-
-지연 시켜 stream으로 받아오게 처리하여 비동기는 아니지만 비교적 성능이 block 보단 좋기 때문에 사용. 대규모 호출에 대해 적은 자원으로 처리할 수 있게 개선 (비동기로 하지 않은 이유는 반드시 받아와 처리해야 하는 작업이기 때문)
-
-이 후 코틀린의 코루틴을 사용하면 더 수월하게 받아올 수 있게 성능 개선 가능 (코루틴 Scope 및 Handling 학습 필요)
-
 ## TODO
 
-사용성 고도화를 위한 알림 시스템 도입 SSE 사용 
-
-농협 시스템을 부하를 고민한 kafka 도입
-
-결제 시 버저닝하여 결제에 대한 데이터 정합성 맞추기
+1. 비관적락을 이용한 동시성 제어
+2. 사용자 피드백 알람 서비스를 도입하여 처리 (SSE + Redis pub/sub) WebSocket STOMP
+3. 결제 실패 시 slack 연동
+4. OptimisticLockException catch 하여 정합성 오류기 때문에 따로 핸들링 !! 비관적락 vs 낙관적락 결제 일관성 (토스 결제) 추가로 낙관적락/비관적락 왜쓸까에 대한 고민 추가
 
 참고한 포스팅 : https://medium.com/@odysseymoon/spring-webclient-%EC%82%AC%EC%9A%A9%EB%B2%95-5f92d295edc0
