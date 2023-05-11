@@ -56,18 +56,6 @@ class RabbitMqConfig(
         factory.setConcurrentConsumers(1)
         factory.setMaxConcurrentConsumers(1)
         factory.setDefaultRequeueRejected(false)
-
-        // Set up the retry policy
-        val retryTemplate = RetryTemplate()
-        val retryPolicy = SimpleRetryPolicy(5) // Set the maximum number of retry attempts
-        val backOffPolicy = FixedBackOffPolicy()
-        backOffPolicy.backOffPeriod = 3000 // Set the backoff period to 1 minute (60000 milliseconds)
-
-        retryTemplate.setRetryPolicy(retryPolicy)
-        retryTemplate.setBackOffPolicy(backOffPolicy)
-
-        factory.setRetryTemplate(retryTemplate)
-
         return factory
     }
 }

@@ -10,6 +10,7 @@ import me.golf.kotlin.domain.bank.payment.exception.SimplePaymentFailException
 import me.golf.kotlin.domain.bank.payment.nh.dto.SimpleDepositRequestDto
 import me.golf.kotlin.domain.bank.payment.nh.dto.SimplePaymentRequestDto
 import me.golf.kotlin.domain.bank.policy.DefaultValuePolicy.DEFAULT_NH_VALUE
+import org.slf4j.LoggerFactory
 import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.BodyInserters
@@ -26,6 +27,10 @@ class NhPaymentApiClient(
     private val webClient: WebClient
 ): PaymentApiClient {
 
+    companion object {
+        private val log = LoggerFactory.getLogger(NhPaymentApiClient::class.java)
+    }
+
     override fun pay(finAccount: String, transferMoney: BigDecimal): String {
         return webClient.post()
             .uri(URI.create(NhUrlUtils.PAYMENT_URL))
@@ -40,6 +45,10 @@ class NhPaymentApiClient(
                 }
             )
             .bodyToMono<SimplePaymentResponseDto>()
+            .onErrorResume { error ->
+                log.error("Payment failed: {}", error.message)
+                Mono.just(SimplePaymentResponseDto.createDefault(finAccount))
+            }
             .flux()
             .toStream()
             .findFirst()
@@ -62,6 +71,10 @@ class NhPaymentApiClient(
                 }
             )
             .bodyToMono<SimpleRefundResponseDto>()
+            .onErrorResume { error ->
+                log.error("Refund failed: {}", error.message)
+                Mono.just(SimpleRefundResponseDto.createDefault())
+            }
             .flux()
             .toStream()
             .findFirst()

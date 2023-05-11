@@ -14,11 +14,15 @@ import java.time.Duration
 @Configuration
 class WebClientConfig {
 
+
+    /**
+     * 초당 1000개 요청 기준 MAX_CONNECTION 설정 (서버 2대)
+     */
     @Bean
     fun httpClient(): HttpClient {
         val provider = ConnectionProvider.builder("nh-api")
-            .maxConnections(100)
-            .pendingAcquireMaxCount(-1)
+            .maxConnections(150)
+            .pendingAcquireMaxCount(500)
             .pendingAcquireTimeout(Duration.ofSeconds(45))
             .maxIdleTime(Duration.ofSeconds(10))
             .maxLifeTime(Duration.ofSeconds(10))
