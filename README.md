@@ -57,7 +57,7 @@ override fun pay(finAccount: String, transferMoney: BigDecimal): String {
 ```
 
 NH에서는 https://developers.nonghyup.com/guide/GU_1000 따로 못받아온 사유를 응답 메시지에 담아 알려주고 있기 때문에 이 정보를 기반으로 HistoryDto 객체를 생성하여 실패 사유를 함께 저장해준다.
-400 or 500 에러 시 로그로 오류를 확인할 수 있게 
+400 or 500 에러 시 로그로 오류를 확인할 수 있게 ErrorResume을 통해 에러 핸들링을 하였으며 Default 객체를 생성하여 실패에 대한 메시지를 Default 메시지로 주어 다른 사유로 실패한 경우와 구분했습니다.
 
 ## etc implementation Design
 
