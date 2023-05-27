@@ -5,6 +5,16 @@
 코틀린을 사용하여 토이 프로젝트를 진행하며 코틀린에 친숙해지고 싶은 목적으로 진행한 프로젝트. 이외에 핀테크 서비스 또는 e-커머스의 결제 모듈에 대한 관심이 있어 관련 도메인으로 선정하여 작업
 또한 서비스 특성상 비동기나 다양한 비즈니스 기술적 고민이 가능하기 때문에 경험해보고싶어서 진행 
 
+## Git branch 전략
+---
+
+문제 정의를 위해 Issue를 사용했으며 Convention은 다음과 같이 가져갔습니다. 
+
+- master : release branch
+- develop : develop test branch
+- feature/#{issue_number}/{feature_name} : normal working branch
+- hotfix/#{issue_number}/{hotfix_name} : bug working branch
+
 ## ⚙️Tech Stack
 
 Back-End : Kotlin + Spring boot + JWT + Spring Security
