@@ -87,6 +87,6 @@ FinAccount는 농협에 핀테크 서비스를 이용할 수 있도록 도와주
 2. 사용자 피드백 알람 서비스를 도입하여 처리 (SSE + Redis pub/sub) WebSocket STOMP
 3. 결제 실패 시 slack 연동
 4. OptimisticLockException catch 하여 정합성 오류기 때문에 따로 핸들링 !! 비관적락 vs 낙관적락 결제 일관성 (토스 결제) 추가로 낙관적락/비관적락 왜쓸까에 대한 고민 추가
-5. 모든 외부 요청이 동기기 때문에 더 간편한 Feign Client로 개선 가능
+5. 모든 외부 요청이 동기기 때문에 복잡한 webClient 비동기 라이브러리를 동기로 처리하는 것 보다 Feign Client로 개선
 
 참고한 포스팅 : https://medium.com/@odysseymoon/spring-webclient-%EC%82%AC%EC%9A%A9%EB%B2%95-5f92d295edc0
